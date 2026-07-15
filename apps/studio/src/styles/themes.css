@@ -1,0 +1,10 @@
+:root {
+  --theme-background: #070b14;
+  --theme-surface: rgba(255, 255, 255, 0.04);
+
+  --theme-text: #ffffff;
+  --theme-text-muted: rgba(255, 255, 255, 0.72);
+
+  --theme-primary: #57b6ff;
+  --theme-primary-glow: rgba(87, 182, 255, 0.35);
+}

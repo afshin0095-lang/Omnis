@@ -1,0 +1,10 @@
+:root {
+  --color-background: #070b14;
+  --color-text: #ffffff;
+
+  --radius-md: 16px;
+
+  --duration-normal: 250ms;
+
+  --space-md: 16px;
+}
