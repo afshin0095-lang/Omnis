@@ -1,9 +1,9 @@
-import RootLayout from "@/components/layout/RootLayout";
-import AuroraBackground from "@/components/effects/AuroraBackground";
-import Orb from "@/components/effects/Orb";
+import RootLayout from "../../components/layout/RootLayout";
+import AuroraBackground from "../../components/effects/AuroraBackground";
+import Orb from "../../components/effects/Orb";
 
-import Logo from "@/components/branding/Logo";
-import Tagline from "@/components/branding/Tagline";
+import Logo from "../../components/branding/Logo";
+import Tagline from "../../components/branding/Tagline";
 
 export default function WelcomePage() {
   return (
@@ -13,9 +13,7 @@ export default function WelcomePage() {
       <RootLayout>
         <section className="welcome-content">
           <Orb />
-
           <Logo />
-
           <Tagline />
         </section>
       </RootLayout>
