@@ -1,134 +1,118 @@
 # OMNIS Documentation Map
 
+Every document in the repository, in reading order. A document that is not listed here is
+not discoverable, and `pnpm verify:workspace` fails on one that is missing — so this file is
+kept in step with the tree by a gate rather than by memory.
+
+**New here?** Read [README.md](README.md), then
+[01-architecture/ARCHITECTURE.md](01-architecture/ARCHITECTURE.md), then
+[01-architecture/PLATFORM_FOUNDATION.md](01-architecture/PLATFORM_FOUNDATION.md).
+**Changing code?** Read [../AGENTS.md](../AGENTS.md) and
+[05-implementation/DEVELOPMENT_WORKFLOW.md](05-implementation/DEVELOPMENT_WORKFLOW.md).
+
 ## 00 — Foundation
 
-- [README](README.md)
-- [Architecture](ARCHITECTURE.md)
-- [System Specification](SYSTEM_SPEC.md)
-- [AI Build Guide](AI_BUILD_GUIDE.md)
-- [Roadmap](ROADMAP.md)
-- [Glossary](GLOSSARY.md)
+| Document                                 | What it settles                                             |
+| ---------------------------------------- | ----------------------------------------------------------- |
+| [README.md](README.md)                   | What OMNIS is, and how the documentation is organised       |
+| [PROJECT_STATUS.md](PROJECT_STATUS.md)   | The authoritative snapshot of what exists right now         |
+| [ROADMAP.md](ROADMAP.md)                 | What is built, what is next, and in what order              |
+| [GLOSSARY.md](GLOSSARY.md)               | Canonical terminology — one name per concept                |
+| [../README.md](../README.md)             | Repository entry point: quickstart, package map, invariants |
+| [../AGENTS.md](../AGENTS.md)             | The development contract for humans and coding agents       |
+| [../CHANGELOG.md](../CHANGELOG.md)       | Notable changes, per Sprint                                 |
+| [../CONTRIBUTING.md](../CONTRIBUTING.md) | Rules, gates and conventions for contributions              |
+| [../SECURITY.md](../SECURITY.md)         | Vulnerability reporting and the security boundary summary   |
 
-## 01 — Digital Human
+## 01 — Architecture
 
-- [Digital Human OS](domains/DIGITAL_HUMAN_OS.md)
-- Character Engine
-- Life & World OS
-- Appearance & Continuity
-- Emotion & Behavior
-- Knowledge & Expertise
-- Memory Fabric
-- Experience & Learning
-- Agency & Decision Making
-- Relationships & Social Identity
-- Reality & Identity Governance
+| Document                                                                         | What it settles                                                          |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| [01-architecture/ARCHITECTURE.md](01-architecture/ARCHITECTURE.md)               | Domains, layers, cross-cutting rules, the canonical experience loop      |
+| [01-architecture/PLATFORM_FOUNDATION.md](01-architecture/PLATFORM_FOUNDATION.md) | Packages, dependency layering, module system, strictness, gates          |
+| [01-architecture/EVENT_ARCHITECTURE.md](01-architecture/EVENT_ARCHITECTURE.md)   | Event grammar, ownership map, envelope, registry, delivery semantics     |
+| [01-architecture/SECURITY_BOUNDARIES.md](01-architecture/SECURITY_BOUNDARIES.md) | Redaction, personal data, tenancy, approval gates, telemetry cardinality |
 
-## 02 — Intelligence
+## 02 — Domain Model
 
-- OMNIS Brain
-- Knowledge Graph
-- RAG
-- Context Engine
-- Agent Mesh
-- Agent SDK
-- Agent Orchestrator
-- Scheduler
-- Evaluation Engine
-- Learning Engine
+| Document                                                                 | What it settles                                       |
+| ------------------------------------------------------------------------ | ----------------------------------------------------- |
+| [02-domain-model/DOMAIN_TAXONOMY.md](02-domain-model/DOMAIN_TAXONOMY.md) | The domain map and what each domain owns              |
+| [02-domain-model/AGENT_MESH.md](02-domain-model/AGENT_MESH.md)           | Agent mesh model: registry, orchestration, evaluation |
 
-## 03 — Automation
+## 03 — Contracts
 
-- Workflow Engine
-- Event Bus
-- Task Queue
-- State Machines
-- Policies
-- Permissions
-- Human-in-the-loop
+| Document                                                   | What it settles                                                  |
+| ---------------------------------------------------------- | ---------------------------------------------------------------- |
+| [03-contracts/IDENTIFIERS.md](03-contracts/IDENTIFIERS.md) | Identifier format, the twenty kinds, invariants, adding a kind   |
+| [03-contracts/VERSIONING.md](03-contracts/VERSIONING.md)   | Compatibility rules, vocabulary governance, deprecation timeline |
 
-## 04 — Media
+## 04 — Specifications
 
-- Research
-- Trend Detection
-- Content Opportunity
-- Strategy
-- Briefing
-- Script
-- Storyboard
-- Voice
-- Visual Generation
-- Video Generation
-- Editing
-- QA
-- Thumbnail
-- SEO
-- Publishing
+Domain and subsystem specifications. These describe intended behaviour; where a subsystem is
+not yet implemented, [PROJECT_STATUS.md](PROJECT_STATUS.md) says so explicitly.
 
-## 05 — Social
+- [04-specifications/AGENT_REGISTRY_SPEC.md](04-specifications/AGENT_REGISTRY_SPEC.md)
+- [04-specifications/AGENT_RUNTIME_AND_MULTI_AGENT_SPEC.md](04-specifications/AGENT_RUNTIME_AND_MULTI_AGENT_SPEC.md)
+- [04-specifications/AGENT_RUNTIME_AND_ORCHESTRATION_SPEC.md](04-specifications/AGENT_RUNTIME_AND_ORCHESTRATION_SPEC.md)
+- [04-specifications/AGENT_RUNTIME_SPEC.md](04-specifications/AGENT_RUNTIME_SPEC.md)
+- [04-specifications/APPEARANCE_CONTINUITY_ENGINE_SPEC.md](04-specifications/APPEARANCE_CONTINUITY_ENGINE_SPEC.md)
+- [04-specifications/AUDIENCE_INTELLIGENCE_AND_COMMUNITY_ENGINE_SPEC.md](04-specifications/AUDIENCE_INTELLIGENCE_AND_COMMUNITY_ENGINE_SPEC.md)
+- [04-specifications/AUDIENCE_INTELLIGENCE_ENGINE_SPEC.md](04-specifications/AUDIENCE_INTELLIGENCE_ENGINE_SPEC.md)
+- [04-specifications/AUDIENCE_INTELLIGENCE_SPEC.md](04-specifications/AUDIENCE_INTELLIGENCE_SPEC.md)
+- [04-specifications/CHARACTER_OS_SPEC.md](04-specifications/CHARACTER_OS_SPEC.md)
+- [04-specifications/CONTENT_FACTORY_AND_PRODUCTION_ENGINE_SPEC.md](04-specifications/CONTENT_FACTORY_AND_PRODUCTION_ENGINE_SPEC.md)
+- [04-specifications/CONTENT_FACTORY_SPEC.md](04-specifications/CONTENT_FACTORY_SPEC.md)
+- [04-specifications/CONTENT_RESEARCH_AND_DISCOVERY_ENGINE_SPEC.md](04-specifications/CONTENT_RESEARCH_AND_DISCOVERY_ENGINE_SPEC.md)
+- [04-specifications/CONTENT_STRATEGY_AND_EDITORIAL_PLANNING_ENGINE_SPEC.md](04-specifications/CONTENT_STRATEGY_AND_EDITORIAL_PLANNING_ENGINE_SPEC.md)
+- [04-specifications/DATA_ARCHITECTURE_SPEC.md](04-specifications/DATA_ARCHITECTURE_SPEC.md)
+- [04-specifications/DIGITAL_HUMAN_AND_CHARACTER_GENERATION_ENGINE_SPEC.md](04-specifications/DIGITAL_HUMAN_AND_CHARACTER_GENERATION_ENGINE_SPEC.md)
+- [04-specifications/DIGITAL_HUMAN_SIMULATION_ENGINE_SPEC.md](04-specifications/DIGITAL_HUMAN_SIMULATION_ENGINE_SPEC.md)
+- [04-specifications/EMOTION_AND_AFFECTIVE_STATE_ENGINE_SPEC.md](04-specifications/EMOTION_AND_AFFECTIVE_STATE_ENGINE_SPEC.md)
+- [04-specifications/EVENT_BUS_AND_WORKFLOW_SPEC.md](04-specifications/EVENT_BUS_AND_WORKFLOW_SPEC.md)
+- [04-specifications/KNOWLEDGE_AND_EXPERTISE_ENGINE_SPEC.md](04-specifications/KNOWLEDGE_AND_EXPERTISE_ENGINE_SPEC.md)
+- [04-specifications/KNOWLEDGE_AND_LEARNING_ENGINE_SPEC.md](04-specifications/KNOWLEDGE_AND_LEARNING_ENGINE_SPEC.md)
+- [04-specifications/MEDIA_GENERATION_ENGINE_SPEC.md](04-specifications/MEDIA_GENERATION_ENGINE_SPEC.md)
+- [04-specifications/MEMORY_ARCHITECTURE_SPEC.md](04-specifications/MEMORY_ARCHITECTURE_SPEC.md)
+- [04-specifications/MEMORY_MESH_SPEC.md](04-specifications/MEMORY_MESH_SPEC.md)
+- [04-specifications/MODEL_ORCHESTRATION_AND_AI_AGENT_INFRASTRUCTURE_SPEC.md](04-specifications/MODEL_ORCHESTRATION_AND_AI_AGENT_INFRASTRUCTURE_SPEC.md)
+- [04-specifications/OMNIS_ANALYTICS_INTELLIGENCE_AND_GROWTH_ENGINE_SPEC.md](04-specifications/OMNIS_ANALYTICS_INTELLIGENCE_AND_GROWTH_ENGINE_SPEC.md)
+- [04-specifications/OMNIS_AUTONOMOUS_CONTENT_OPERATING_SYSTEM_SPEC.md](04-specifications/OMNIS_AUTONOMOUS_CONTENT_OPERATING_SYSTEM_SPEC.md)
+- [04-specifications/OMNIS_CONTENT_FACTORY_PIPELINE_AND_PRODUCTION_ENGINE_SPEC.md](04-specifications/OMNIS_CONTENT_FACTORY_PIPELINE_AND_PRODUCTION_ENGINE_SPEC.md)
+- [04-specifications/OMNIS_MEMORY_KNOWLEDGE_AND_LEARNING_SYSTEM_SPEC.md](04-specifications/OMNIS_MEMORY_KNOWLEDGE_AND_LEARNING_SYSTEM_SPEC.md)
+- [04-specifications/OMNIS_PLATFORM_INTEGRATION_AND_PUBLISHING_ENGINE_SPEC.md](04-specifications/OMNIS_PLATFORM_INTEGRATION_AND_PUBLISHING_ENGINE_SPEC.md)
+- [04-specifications/OMNIS_SECURITY_PRIVACY_GOVERNANCE_AND_TRUST_SPEC.md](04-specifications/OMNIS_SECURITY_PRIVACY_GOVERNANCE_AND_TRUST_SPEC.md)
+- [04-specifications/ORCHESTRATOR_SPEC.md](04-specifications/ORCHESTRATOR_SPEC.md)
+- [04-specifications/PERSONALITY_ENGINE_SPEC.md](04-specifications/PERSONALITY_ENGINE_SPEC.md)
+- [04-specifications/RELATIONSHIP_AND_SOCIAL_INTERACTION_ENGINE_SPEC.md](04-specifications/RELATIONSHIP_AND_SOCIAL_INTERACTION_ENGINE_SPEC.md)
+- [04-specifications/SECURITY_ARCHITECTURE_SPEC.md](04-specifications/SECURITY_ARCHITECTURE_SPEC.md)
+- [04-specifications/SOCIAL_PLATFORM_ORCHESTRATION_SPEC.md](04-specifications/SOCIAL_PLATFORM_ORCHESTRATION_SPEC.md)
+- [04-specifications/SYSTEM_SPEC.md](04-specifications/SYSTEM_SPEC.md)
+- [04-specifications/TASK_CONTRACT_SPEC.md](04-specifications/TASK_CONTRACT_SPEC.md)
+- [04-specifications/TOOL_GATEWAY_SPEC.md](04-specifications/TOOL_GATEWAY_SPEC.md)
+- [04-specifications/VOICE_AND_SPEECH_IDENTITY_ENGINE_SPEC.md](04-specifications/VOICE_AND_SPEECH_IDENTITY_ENGINE_SPEC.md)
 
-- YouTube
-- Instagram
-- TikTok
-- X
-- Reddit
-- Cross-platform Distribution
-- Comments
-- DMs
-- Community
-- Moderation
+## 05 — Implementation
 
-## 06 — Audience Intelligence
+| Document                                                                               | What it settles                                                     |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| [05-implementation/AI_BUILD_GUIDE.md](05-implementation/AI_BUILD_GUIDE.md)             | The operational contract for coding agents                          |
+| [05-implementation/MONOREPO.md](05-implementation/MONOREPO.md)                         | Install, build, test, debug; adding dependencies; known constraints |
+| [05-implementation/DEVELOPMENT_WORKFLOW.md](05-implementation/DEVELOPMENT_WORKFLOW.md) | The loop, the gates, conventions, deferred hardening                |
 
-- Audience Graph
-- Demand Clustering
-- Sentiment
-- Loyalty
-- Requests
-- Content Feedback
-- Topic Prioritization
-- Opportunity Scoring
+## 07 — Decisions
 
-## 07 — Growth & Business
+Architecture Decision Records. A change to a domain boundary, a package dependency rule, a
+contract version or the toolchain requires one.
 
-- Analytics
-- Experimentation
-- Growth Strategy
-- Competitor Intelligence
-- Brand Management
-- Revenue
-- Sponsorships
-- Affiliate
-- Membership
-- Products
-- Licensing
+- [07-decisions/ADR-0000-architecture-governance.md](07-decisions/ADR-0000-architecture-governance.md)
+- [07-decisions/ADR-0001-monorepo-and-toolchain.md](07-decisions/ADR-0001-monorepo-and-toolchain.md)
+- [07-decisions/ADR-0002-domain-boundaries.md](07-decisions/ADR-0002-domain-boundaries.md)
+- [07-decisions/ADR-0003-event-contracts.md](07-decisions/ADR-0003-event-contracts.md)
+- [07-decisions/ADR-0004-frontend-stack.md](07-decisions/ADR-0004-frontend-stack.md)
 
-## 08 — Platform
+## Documentation rule
 
-- Control Plane
-- Identity & Access
-- Data Platform
-- AI Model Layer
-- Model Router
-- Integrations
-- Infrastructure
-- Observability
-- Security
-- Disaster Recovery
-
-## 09 — Contracts
-
-- API contracts
-- Event contracts
-- Domain contracts
-- Data schemas
-- Agent contracts
-- Model/provider contracts
-
-## 10 — Architecture Decisions
-
-- ADR-0001 Architecture Governance
-- Future ADRs
-
-## Documentation Rule
-
-Any implementation agent should be able to start from this map and navigate to the authoritative specification for the code it is changing.
+Any implementation agent should be able to start from this map and navigate to the
+authoritative specification for the code it is changing. If code and specification disagree,
+do not silently choose one: document the discrepancy and resolve it through an ADR.

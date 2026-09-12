@@ -1,28 +1,65 @@
+# ---------------------------------------------------------------------------
 # Dependencies
+# ---------------------------------------------------------------------------
 node_modules/
+.pnpm-store/
 
-# Logs
-*.log
-
-# Environment
-.env
-.env.*
-
-# Build
+# ---------------------------------------------------------------------------
+# Build & cache artifacts
+# ---------------------------------------------------------------------------
 dist/
 build/
 coverage/
-
-# Turbo
 .turbo/
+*.tsbuildinfo
+.eslintcache
+.vite/
 
-# VS Code
-.vscode/*.code-workspace
+# ---------------------------------------------------------------------------
+# Logs
+# ---------------------------------------------------------------------------
+*.log
+npm-debug.log*
+pnpm-debug.log*
+logs/
 
-# OS
+# ---------------------------------------------------------------------------
+# Environment / secrets
+#
+# SECURITY INVARIANT: no credential-bearing file is ever committed.
+# `.env.example` is the ONLY permitted env file in version control and must
+# contain keys with empty or obviously non-production placeholder values.
+#
+# Note the ordering: `.env.*` is broad, so `.env.example` must be re-included
+# explicitly or it is silently ignored. This was a latent defect in the
+# pre-Sprint-0 .gitignore.
+# ---------------------------------------------------------------------------
+.env
+.env.*
+.env.local
+.env.*.local
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+secrets.json
+service-account*.json
+
+# ---------------------------------------------------------------------------
+# Editors / OS
+# ---------------------------------------------------------------------------
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
 .DS_Store
 Thumbs.db
 
+# ---------------------------------------------------------------------------
 # Misc
+# ---------------------------------------------------------------------------
 *.tmp
 *.temp
+*.local

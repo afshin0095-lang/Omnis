@@ -1,26 +1,23 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-    "target": "es2023",
-    "lib": ["ES2023", "DOM"],
-    "module": "esnext",
-    "types": ["vite/client"],
-    "allowArbitraryExtensions": true,
-    "skipLibCheck": true,
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    // `node` is included because the test suite reads the workspace to verify that
+    // the foundation caption matches the packages that actually exist. Application
+    // code must still not import from `node:*`; that is enforced by review and by
+    // the architecture tests, not by this flag.
+    "types": ["vite/client", "node"],
 
-    /* Bundler mode */
-    "moduleResolution": "bundler",
+    // A Vite application is bundled, not resolved at runtime, so it uses bundler
+    // resolution and extensionless relative imports. Every other workspace member
+    // is an ESM package consumed by Node and keeps NodeNext with `.js` specifiers;
+    // the difference is a property of the runtime, not an inconsistency to fix.
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
-    "moduleDetection": "force",
-    "noEmit": true,
     "jsx": "react-jsx",
-
-    /* Linting */
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noEmit": true
   },
-  "include": ["src"]
+  "include": ["src", "vitest.setup.ts"]
 }

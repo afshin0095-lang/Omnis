@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    // Pure data: no Node and no DOM types, so the tokens cannot accidentally
+    // grow a dependency on either and stay usable from any runtime.
+    "types": []
+  },
+  "include": ["src"]
+}

@@ -1,0 +1,45 @@
+# OMNIS line-ending and diff policy.
+#
+# The repository is edited on Windows, macOS and Linux, and by AI agents running
+# in Linux sandboxes. Normalising to LF at commit time prevents whole-file
+# line-ending diffs from masking real changes.
+* text=auto eol=lf
+
+# Explicit text types (avoids relying on Git's heuristic detection).
+*.ts text eol=lf
+*.tsx text eol=lf
+*.mts text eol=lf
+*.cts text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.svg text eol=lf
+*.sh text eol=lf
+
+# Binary assets must never be normalised or diffed as text.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.mp3 binary
+*.mp4 binary
+*.wav binary
+
+# Generated files: collapse in review and exclude from language statistics.
+pnpm-lock.yaml -diff linguist-generated=true
+**/dist/** linguist-generated=true
+
+# The specification corpus is documentation, not prose to be re-wrapped.
+*.md linguist-documentation=true

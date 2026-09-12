@@ -4,7 +4,31 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>studio</title>
+    <meta name="color-scheme" content="dark light" />
+    <meta
+      name="description"
+      content="OMNIS Studio - the operator surface for the OMNIS AI operating system: characters, content factory, publishing and audience intelligence."
+    />
+    <meta name="theme-color" content="#03050b" />
+    <title>OMNIS Studio</title>
+    <!--
+      Painted before any module loads. Without it the browser shows its default
+      white canvas for the duration of the bundle download, which on a dark
+      interface is a visible flash on every single load. The colour matches the
+      AI Studio theme's background token; the runtime theme then takes over.
+    -->
+    <style>
+      html,
+      body,
+      #root {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        background: #03050b;
+        color: #eaf4ff;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

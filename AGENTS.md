@@ -10,14 +10,16 @@ OMNIS also creates and manages persistent Digital Humans that act as virtual inf
 
 Before changing architecture or behavior, read:
 
-1. `docs/README.md`
-2. `docs/SUMMARY.md`
-3. `docs/ARCHITECTURE.md`
-4. `docs/SYSTEM_SPEC.md`
-5. `docs/AI_BUILD_GUIDE.md`
-6. relevant domain specifications under `docs/domains/`
-7. relevant ADRs under `docs/adr/`
-8. relevant contracts under `docs/contracts/`
+1. `docs/README.md` — what OMNIS is and how the documentation is organised
+2. `docs/SUMMARY.md` — the complete documentation map
+3. `docs/01-architecture/ARCHITECTURE.md` — domains, layers, cross-cutting rules
+4. `docs/01-architecture/PLATFORM_FOUNDATION.md` — packages, dependency layering, gates
+5. `docs/04-specifications/SYSTEM_SPEC.md` — system-level behaviour
+6. `docs/05-implementation/AI_BUILD_GUIDE.md` — the operational contract for coding agents
+7. relevant domain specifications under `docs/04-specifications/`
+8. relevant ADRs under `docs/07-decisions/`
+9. relevant contracts under `docs/03-contracts/`
+10. `docs/PROJECT_STATUS.md` — what actually exists right now
 
 Code must implement the documented contracts. If code and specification disagree, do not silently choose one: document the discrepancy and resolve it through an ADR.
 
@@ -34,7 +36,8 @@ Code must implement the documented contracts. If code and specification disagree
 - Global learning must be validated before propagation to other characters.
 - All autonomous actions must pass through policy and permission controls.
 - External providers must be accessed through adapters/model routing, not hard-coded throughout domain logic.
-- Secrets never belong in source code, logs, prompts, or client bundles.
+- Secrets never belong in source code, logs, prompts, or client bundles (`pnpm verify:secrets` enforces this).
+- Package dependencies point strictly downward through the layers; the health checker refuses a cycle or an upward import.
 - Every important autonomous action must be auditable.
 - Tests and documentation are part of the implementation, not optional follow-up work.
 

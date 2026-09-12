@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.base.json",
+  // Root anchor configuration.
+  //
+  // Every workspace member owns a tsconfig that extends tsconfig.base.json and
+  // declares its own `include`, `outDir` and runtime libraries. This file exists
+  // so that editors and tools resolving upward from the repository root pick up
+  // OMNIS strictness settings instead of falling back to a permissive default.
+  //
+  // It intentionally compiles nothing on its own.
+  "files": [],
+  "include": [],
+  "exclude": ["node_modules", "**/dist", "**/coverage", "**/.turbo"]
+}

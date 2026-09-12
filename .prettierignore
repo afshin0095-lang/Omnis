@@ -1,0 +1,31 @@
+# Build and dependency artifacts
+node_modules
+dist
+build
+coverage
+.turbo
+*.tsbuildinfo
+pnpm-lock.yaml
+
+# Changelogs are authored by hand and must not be reflowed.
+CHANGELOG.md
+
+# ---------------------------------------------------------------------------
+# Legacy authored specification corpus.
+#
+# These documents pre-date Sprint 0 and were written by hand. They are preserved
+# byte-for-byte: mechanical reflow of ~35k lines of specification would produce
+# an unreviewable diff and risks corrupting the ASCII diagrams inside them.
+# `embeddedLanguageFormatting: off` already protects fenced blocks; ignoring the
+# files entirely protects prose and table layout too.
+#
+# New documentation (docs/00-foundation, docs/01-architecture, docs/03-contracts,
+# docs/05-implementation, docs/06-operations, docs/07-decisions/ADR-0001+) IS
+# formatted by Prettier.
+# ---------------------------------------------------------------------------
+docs/04-specifications/
+docs/02-domain-model/AGENT_MESH.md
+docs/02-domain-model/DOMAIN_TAXONOMY.md
+docs/01-architecture/ARCHITECTURE.md
+docs/05-implementation/AI_BUILD_GUIDE.md
+docs/07-decisions/ADR-0000-architecture-governance.md

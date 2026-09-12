@@ -1,118 +1,227 @@
-body {
-  background: var(--theme-background);
-  color: var(--theme-text);
+/**
+ * OMNIS Studio — structural stylesheet.
+ *
+ * WHAT LIVES HERE
+ * ---------------
+ * Only structure: reset, document defaults, and the positioning of the Studio's own
+ * effects (aurora, orb, wordmark). Every *value* — colour, type, spacing, radius,
+ * shadow, motion, layer — comes from the `--omnis-*` custom properties that
+ * `@omnis/theme` publishes at runtime. That is what makes the Studio switchable
+ * between the dark, light and AI Studio themes without a stylesheet swap.
+ *
+ * WHAT DOES NOT LIVE HERE
+ * -----------------------
+ * Component appearance. Buttons, cards, panels, badges and inputs are styled by
+ * `@omnis/ui`; restyling them here would create a second, competing source of truth.
+ *
+ * MEDIA QUERIES USE LITERAL WIDTHS
+ * --------------------------------
+ * CSS custom properties are not permitted inside a media query, so the breakpoints
+ * below are literals. They mirror `BREAKPOINTS` in `@omnis/theme`, and
+ * `src/__tests__/styles.test.ts` asserts that the two agree — which is the only way
+ * to keep a literal in sync with a token without giving up on tokens.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-.welcome-page {
-  position: relative;
-
-  width: 100%;
+html,
+body,
+#root {
   height: 100%;
+}
 
+body {
+  margin: 0;
+  background: var(--omnis-color-background);
+  color: var(--omnis-color-text);
+  font-family: var(--omnis-font-sans);
+  font-size: var(--omnis-font-size-base);
+  line-height: var(--omnis-line-height-normal);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* The Studio is a dark instrumentation surface; a rubber-band overscroll that
+     shows white behind the page breaks the illusion at the very edge of the screen. */
+  overscroll-behavior: none;
+}
+
+/* Baseline focus ring for anything the component library does not already cover.
+   The library scopes its own ring to `.omnis-focusable`; this catches author-written
+   links and controls so focus is never invisible anywhere in the app. */
+:focus-visible {
+  outline: 2px solid var(--omnis-color-border-focus);
+  outline-offset: 2px;
+}
+
+/* Visually hidden but present for assistive technology. Used where an animation
+   splits text into fragments that must still be announced as one word. The 1px box
+   with `clip` is the established pattern; `display: none` would remove it from the
+   accessibility tree entirely and defeat the purpose. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------------------------------------------------------------- shell ----- */
+
+.studio-root {
+  position: relative;
   display: grid;
   place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: var(--omnis-space-6);
+  isolation: isolate;
+}
 
+.studio-root__content {
+  position: relative;
+  z-index: var(--omnis-z-index-content);
+  width: 100%;
+  max-width: 68rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--omnis-space-8);
+  text-align: center;
+}
+
+/* --------------------------------------------------------------- aurora ----- */
+
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: var(--omnis-z-index-base);
+  pointer-events: none;
   overflow: hidden;
 }
 
-.welcome-content {
-  position: relative;
-
-  text-align: center;
-
-  z-index: 10;
+.aurora__layer {
+  position: absolute;
+  inset: -25%;
+  will-change: transform;
 }
 
-.welcome-title {
-  font-size: clamp(4rem, 10vw, 7rem);
-
-  letter-spacing: .45em;
-
-  font-weight: 700;
-
-  color: var(--theme-text);
-}
-
-.welcome-subtitle {
-  margin-top: 20px;
-
-  font-size: 1.15rem;
-
-  color: var(--theme-text-muted);
-
-  letter-spacing: .15em;
-}
-
-.aurora-background {
-  position: fixed;
-
+/* A vignette pulls the eye to the centre and hides the seam where the radial
+   gradients meet the edge of the viewport. */
+.aurora__vignette {
+  position: absolute;
   inset: 0;
-
-  z-index: 0;
-
-  background:
-    radial-gradient(circle at 20% 10%,
-      rgba(87,182,255,.22),
-      transparent 42%),
-
-    radial-gradient(circle at 80% 20%,
-      rgba(140,90,255,.14),
-      transparent 35%),
-
-    radial-gradient(circle at 50% 100%,
-      rgba(0,255,255,.08),
-      transparent 45%),
-
-    #070b14;
+  background: radial-gradient(
+    ellipse at 50% 45%,
+    transparent 30%,
+    color-mix(in srgb, var(--omnis-color-background) 72%, transparent) 100%
+  );
 }
+
+/* ----------------------------------------------------------------- orb ------ */
+
 .orb {
-  display: grid;
-  place-items: center;
-
-  margin-bottom: 42px;
-}
-
-.orb-core {
-  width: 120px;
-  height: 120px;
-
-  border-radius: 50%;
-
-  background:
-    radial-gradient(circle at 35% 30%,
-      rgba(255,255,255,.9),
-      rgba(87,182,255,.65) 30%,
-      rgba(87,182,255,.2) 70%,
-      transparent);
-
-  box-shadow:
-    0 0 40px rgba(87,182,255,.45),
-    0 0 120px rgba(87,182,255,.18);
-
-  animation: orb-breathe 4s ease-in-out infinite;
-}
-
-@keyframes orb-breathe {
-
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.06);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-
-}
-.root-layout {
-  width: 100%;
-  height: 100%;
-
-  display: grid;
-  place-items: center;
-
   position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.orb__core {
+  border-radius: var(--omnis-radius-pill);
+  will-change: transform;
+}
+
+/* Two counter-rotating rings around the core. They are the reason the orb reads as
+   an instrument rather than as a decorative blob. */
+.orb__ring {
+  position: absolute;
+  border-radius: var(--omnis-radius-pill);
+  border: 1px solid color-mix(in srgb, var(--omnis-color-primary) 28%, transparent);
+  pointer-events: none;
+}
+
+.orb__ring--outer {
+  inset: -45%;
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--omnis-color-secondary) 24%, transparent);
+}
+
+.orb__ring--inner {
+  inset: -20%;
+  border-color: color-mix(in srgb, var(--omnis-color-primary) 38%, transparent);
+}
+
+/* ------------------------------------------------------------ wordmark ------ */
+
+.studio-wordmark {
+  /* The tracking is applied per glyph rather than to the block, because
+     letter-spacing adds trailing space after the final character and would push a
+     centred wordmark off-centre by half a tracking step. */
+  text-indent: var(--omnis-letter-spacing-display);
+  text-wrap: balance;
+}
+
+.studio-wordmark__glyph {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* --------------------------------------------------------------- welcome ---- */
+
+.welcome {
+  width: 100%;
+}
+
+.welcome__services {
+  /* Identifier-style copy: monospace, wide tracking, low emphasis. It is a caption,
+     not a navigation aid, so it must not compete with the wordmark. */
+  text-transform: lowercase;
+}
+
+.welcome__themes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--omnis-space-2);
+}
+
+/* ------------------------------------------------------------ responsive ---- */
+
+@media (max-width: 767.98px) {
+  .studio-root {
+    padding: var(--omnis-space-4);
+  }
+
+  .studio-root__content {
+    gap: var(--omnis-space-6);
+  }
+}
+
+@media (min-width: 1024px) {
+  .studio-root__content {
+    gap: var(--omnis-space-10);
+  }
+}
+
+/* Motion is a design choice until a visitor says otherwise. The component library
+   collapses its own animations under this query; these rules cover the Studio's
+   ambient effects, which the library knows nothing about. */
+@media (prefers-reduced-motion: reduce) {
+  .aurora__layer,
+  .orb__core,
+  .orb__ring,
+  .studio-wordmark__glyph {
+    animation: none !important;
+    transition: none !important;
+  }
 }

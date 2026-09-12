@@ -1,4 +1,70 @@
+# OMNIS workspace definition.
+#
+# Every version used by more than one workspace member is declared once in the
+# `catalog` below and referenced as `catalog:` from package manifests. This is a
+# deliberate guard against the version skew found in the Sprint 0 audit (the
+# repository previously installed TypeScript 6.0.3 and TypeScript 7.0.2 side by
+# side, which broke typescript-eslint because it only supports <6.1.0).
+#
+# Rule: a dependency shared by two or more members MUST come from the catalog.
+# See docs/05-implementation/MONOREPO.md.
+
 packages:
-  - apps/*
-  - packages/*
-  - services/*
+  - "apps/*"
+  - "packages/*"
+  - "services/*"
+  - "tests"
+  - "tooling/*"
+
+catalog:
+  # --- Toolchain -----------------------------------------------------------
+  # Pinned to the TypeScript 6 line because typescript-eslint 8.x declares
+  # `typescript: >=4.8.4 <6.1.0` as a peer range. Do not bump to 7.x until
+  # typescript-eslint publishes support; see ADR-0001.
+  typescript: ~6.0.3
+  "@types/node": ^22.20.2
+  vitest: ^5.0.0
+
+  # --- Lint / format ------------------------------------------------------
+  eslint: ^10.10.0
+  "@eslint/js": ^10.0.1
+  typescript-eslint: ^8.70.0
+  globals: ^17.12.0
+  prettier: ^3.9.6
+
+  # --- Task runner --------------------------------------------------------
+  turbo: ^2.10.12
+
+  # --- Validation (single technology: Zod) ---------------------------------
+  zod: ^4.6.2
+
+  # --- Frontend ------------------------------------------------------------
+  react: ^19.3.0
+  react-dom: ^19.3.0
+  "@types/react": ^19.3.0
+  "@types/react-dom": ^19.3.0
+  clsx: ^2.1.1
+
+  # --- Studio application -------------------------------------------------
+  # `framer-motion` and NOT `motion`: the repository already installs
+  # framer-motion@12, whose API is the one the Studio components are written
+  # against. Adding the `motion` package alongside it would put two copies of the
+  # same animation engine in the graph. Imports must therefore read
+  # `from "framer-motion"`; `motion/react` does not resolve in this workspace.
+  # See docs/07-decisions/ADR-0004-frontend-stack.md.
+  framer-motion: ^12.42.2
+  react-router-dom: ^7.18.1
+  zustand: ^5.0.14
+  lucide-react: ^1.24.0
+  vite: ^8.1.1
+  "@vitejs/plugin-react": ^6.0.3
+  eslint-plugin-react-hooks: ^7.1.1
+  eslint-plugin-react-refresh: ^0.5.3
+
+  # --- Component testing --------------------------------------------------
+  "@testing-library/react": ^16.3.3
+  "@testing-library/dom": ^10.4.1
+  happy-dom: ^20.14.3
+
+minimumReleaseAgeExclude:
+  - zod@4.6.2

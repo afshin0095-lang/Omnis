@@ -1,36 +1,39 @@
 {
   "name": "studio",
+  "version": "0.1.0",
   "private": true,
-  "version": "0.0.0",
+  "license": "MIT",
+  "description": "OMNIS Studio - the operator surface for the AI operating system: characters, content factory, publishing and analytics.",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "typecheck": "tsc -b --pretty false",
+    "lint": "eslint src vite.config.ts vitest.config.ts --max-warnings=0",
+    "test": "vitest run",
+    "preview": "vite preview",
+    "clean": "node ../../scripts/clean-package.mjs dist"
   },
   "dependencies": {
-    "clsx": "^2.1.1",
-    "framer-motion": "^12.42.2",
-    "lucide-react": "^1.24.0",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "react-router-dom": "^7.18.1",
-    "zustand": "^5.0.14"
+    "@omnis/errors": "workspace:*",
+    "@omnis/theme": "workspace:*",
+    "@omnis/ui": "workspace:*",
+    "clsx": "catalog:",
+    "framer-motion": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@types/node": "^24.13.2",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.3",
-    "eslint": "^10.6.0",
-    "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-react-refresh": "^0.5.3",
-    "globals": "^17.7.0",
-    "typescript": "~6.0.2",
-    "typescript-eslint": "^8.62.0",
-    "vite": "^8.1.1",
-    "vite-tsconfig-paths": "^6.1.1"
+    "@testing-library/dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "eslint": "catalog:",
+    "happy-dom": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
   }
 }

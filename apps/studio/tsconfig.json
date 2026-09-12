@@ -1,7 +1,10 @@
 {
+  // Solution-style configuration: it compiles nothing itself and delegates to the
+  // application and tooling projects. `noEmit` is stated explicitly so that running
+  // `tsc -p tsconfig.json` from the app root can never write build output.
+  "compilerOptions": {
+    "noEmit": true
+  },
   "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
 }

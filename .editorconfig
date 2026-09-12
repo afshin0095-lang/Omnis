@@ -1,0 +1,28 @@
+# Editor-agnostic formatting baseline for OMNIS.
+# Prettier is the authority for code style; this file keeps plain-text files,
+# YAML and editor behaviour consistent for humans and AI agents alike.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# Trailing spaces are meaningful in Markdown (hard line breaks).
+[*.md]
+trim_trailing_whitespace = false
+
+[*.{yml,yaml}]
+indent_size = 2
+
+[*.{json,jsonc}]
+indent_size = 2
+
+[*.mjs]
+indent_size = 2
+
+[Makefile]
+indent_style = tab

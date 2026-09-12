@@ -12,15 +12,27 @@ Its defining capability is the creation and management of persistent Digital Hum
 
 ## Documentation Navigation
 
-- `SUMMARY.md` — complete documentation map
-- `ARCHITECTURE.md` — authoritative system architecture
-- `SYSTEM_SPEC.md` — behavioral and system-level specification
-- `AI_BUILD_GUIDE.md` — instructions for Codex, Claude Code and other coding agents
-- `domains/` — domain specifications
-- `contracts/` — API, event and data contracts
-- `adr/` — architecture decisions
-- `ROADMAP.md` — implementation roadmap
-- `GLOSSARY.md` — canonical terminology
+The repository uses a numbered structure. Every document is listed in
+[SUMMARY.md](SUMMARY.md); the entries below are the ones to read first.
+
+| Directory                                 | Contents                                                                          |
+| ----------------------------------------- | --------------------------------------------------------------------------------- |
+| [`01-architecture/`](01-architecture)     | System architecture, platform foundation, event architecture, security boundaries |
+| [`02-domain-model/`](02-domain-model)     | Domain taxonomy and the agent mesh model                                          |
+| [`03-contracts/`](03-contracts)           | Identifiers and versioning — the rules every contract obeys                       |
+| [`04-specifications/`](04-specifications) | Domain and subsystem specifications (39 documents)                                |
+| [`05-implementation/`](05-implementation) | AI build guide, monorepo mechanics, development workflow                          |
+| [`07-decisions/`](07-decisions)           | Architecture Decision Records, ADR-0000 … ADR-0004                                |
+
+| Start here                                                                             | When                                              |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| [PROJECT_STATUS.md](PROJECT_STATUS.md)                                                 | You want to know what actually exists today       |
+| [ROADMAP.md](ROADMAP.md)                                                               | You want to know what comes next and why          |
+| [GLOSSARY.md](GLOSSARY.md)                                                             | A term is ambiguous — one concept, one name       |
+| [01-architecture/ARCHITECTURE.md](01-architecture/ARCHITECTURE.md)                     | You are reasoning about domains                   |
+| [01-architecture/PLATFORM_FOUNDATION.md](01-architecture/PLATFORM_FOUNDATION.md)       | You are about to add, move or depend on a package |
+| [05-implementation/DEVELOPMENT_WORKFLOW.md](05-implementation/DEVELOPMENT_WORKFLOW.md) | You are about to change code                      |
+| [../AGENTS.md](../AGENTS.md)                                                           | You are a coding agent                            |
 
 ## Documentation Principles
 

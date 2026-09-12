@@ -2,25 +2,35 @@
   "name": "omnis",
   "version": "0.1.0",
   "private": true,
-  "description": "OMNIS AI Operating System",
+  "description": "OMNIS — AI Operating System, Agent OS, Digital Human OS, Content Factory, Audience Intelligence and Growth Platform.",
   "license": "MIT",
   "packageManager": "pnpm@11.13.0",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.12.0",
+    "pnpm": ">=11.0.0"
   },
   "scripts": {
-    "dev": "turbo run dev",
     "build": "turbo run build",
-    "test": "turbo run test",
+    "dev": "turbo run dev",
     "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
     "format": "prettier --write .",
-    "check": "turbo run check"
+    "format:check": "prettier --check .",
+    "verify:workspace": "node scripts/check-workspace-health.mjs",
+    "verify:secrets": "node scripts/scan-secrets.mjs",
+    "verify": "pnpm verify:workspace && pnpm verify:secrets",
+    "check": "pnpm verify && turbo run lint typecheck test build",
+    "clean": "turbo run clean"
   },
   "devDependencies": {
-    "@types/node": "^26.1.1",
-    "eslint": "^10.7.0",
-    "prettier": "^3.9.5",
-    "turbo": "^2.10.5",
-    "typescript": "^7.0.2"
+    "@eslint/js": "catalog:",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "globals": "catalog:",
+    "prettier": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
   }
 }
