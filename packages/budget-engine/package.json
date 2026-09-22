@@ -1,0 +1,41 @@
+{
+  "name": "@omnis/budget-engine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Integer-unit budget ledger with idempotent reservations across tokens, requests, time, money and tool executions.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint src --max-warnings=0",
+    "test": "vitest run",
+    "clean": "node ../../scripts/clean-package.mjs"
+  },
+  "dependencies": {
+    "@omnis/ai-core-types": "workspace:*",
+    "@omnis/errors": "workspace:*",
+    "@omnis/execution-context": "workspace:*",
+    "@omnis/types": "workspace:*",
+    "@omnis/validation": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

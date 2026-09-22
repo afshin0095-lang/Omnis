@@ -12,35 +12,43 @@ expensive.
 
 Delivered: the pnpm/Turborepo monorepo and its gates; eleven platform packages (types,
 errors, validation, contracts, events, config, logging, telemetry, theme, ui) plus the
-Studio foundation; 815 tests; the documentation set (architecture, contracts, five ADRs);
+Studio foundation; documentation set (architecture, contracts, ADRs 0000–0004);
 mechanical enforcement of layering, version discipline, documentation integrity and secret
 hygiene; CI.
 
 Deliberately **not** delivered: any product feature, any provider integration, any durable
-transport, any database. See [PROJECT_STATUS.md](PROJECT_STATUS.md).
+transport, any database.
 
-**Why first:** every one of these is expensive to retrofit. An identifier scheme, an event
-envelope and a dependency graph are all things that persisted data and other people's code
-come to depend on; changing them later is a migration, not a refactor.
-
-## Next
+**Why first:** identifiers, event envelopes and dependency graphs are expensive to retrofit
+once persisted data and other packages depend on them.
 
 ### Sprint 1 — AI Core foundation
 
 **Goal:** a provider-independent execution architecture — the kernel every agent runs on.
 
-Planned packages: `ai-core-types`, `model-registry`, `provider-registry`,
-`execution-context`, `agent-runtime`, `tool-runtime`, `policy-engine`, `budget-engine`,
-`execution-kernel`, `model-orchestrator`, `ai-evaluation`, composed by `ai-core-runtime`.
+**Delivered packages:** `ai-core-types`, `model-registry`, `provider-registry`,
+`execution-context`, `policy-engine`, `budget-engine`, `ai-evaluation`, `tool-runtime`,
+`execution-kernel`, `model-orchestrator`, `agent-runtime`, `ai-core-runtime`.
 
-Invariants Sprint 1 must hold: policy is evaluated **before** privileged execution; budget
-is checked **before** expensive work; tools run only through the Tool Runtime; models run
-only through the Model Orchestrator; no vendor SDK appears in domain code; every execution
-preserves correlation and causation; retries are classified, never blind.
+**Also delivered:**
 
-**Exit criteria:** an agent execution can be planned, authorised, budgeted, run through a
-deterministic kernel, evaluated and reported — end to end in tests, with no provider
+- `ai.*` event namespace (22 types) in `@omnis/events`
+- telemetry attributes `omnis.ai.*`
+- new identifier kinds (model, provider, tool, policy, budget, reservation, evaluation, plan)
+- architecture, integration and contract test suites under `tests/`
+- workspace health rules for AI Core layers, forbidden vendor deps, event registration pairing
+- Studio feature seam (`features/ai-core`) with client, mock runtime and view models
+- contracts `docs/03-contracts/AI_*.md`, architecture docs, ADRs 0005–0009
+
+**Invariants held:** policy before privileged execution; budget before expensive work;
+tools only through Tool Runtime; models only through Model Orchestrator; no vendor SDK;
+correlation/causation preserved; retries classified and bounded; money as integer micro-USD.
+
+**Exit criteria met:** an agent execution can be planned, authorised, budgeted, run through
+a deterministic kernel, evaluated and reported — end to end in tests, with no provider
 installed.
+
+## Next
 
 ### Sprint 2 — Digital Human / Character OS foundation
 
@@ -49,24 +57,21 @@ timeline, relationships, knowledge, skills, emotion, health state, evolution and
 versioning. Depends on Sprint 1 for execution and on Sprint 0 for identity, events and
 storage contracts.
 
-### Sprint 3+ — planned sequence
+**Not started.** Do not begin until Sprint 1 gates remain green.
 
-1. **Memory & Knowledge** — the fabric a character's continuity depends on.
-2. **Content Factory** — research → brief → script → media → QA → master.
-3. **Social & Publishing** — platform adapters behind the provider abstraction, approval
-   gates, confirmed publication.
-4. **Audience Intelligence** — signals, requests, clusters, loyalty, opportunities.
-5. **Strategy, Analytics & Growth** — measurement, scoring, experimentation, learning.
-6. **Control Plane & Deployment** — tenancy administration, infrastructure, real telemetry
-   and event backends.
+### Later (ordered by dependency risk)
 
-## Ordering rules
+- Provider adapter packages (OpenAI, Anthropic, …) behind `ProviderAdapter`
+- Durable event transport and persistence
+- Content Factory and production pipelines
+- Publishing / platform orchestration
+- Audience intelligence and growth
+- Deployment and multi-tenant control plane
 
-- **Contracts before implementations.** A domain is specified before it is packaged.
-- **Foundations before features.** Anything persisted, or depended on by two domains, is
-  settled first.
-- **Abstractions before vendors.** The provider contract exists before any provider SDK is
-  installed, so provider independence is a property of the design rather than a promise.
-- **Gates before scale.** Every Sprint adds the checks that will catch its own mistakes; a
-  Sprint that cannot verify itself is not finished.
-- **No Sprint starts before the previous one is independently green.**
+## Reading order for newcomers
+
+1. [README.md](README.md) / repository [README](../README.md)
+2. [PROJECT_STATUS.md](PROJECT_STATUS.md)
+3. [01-architecture/ARCHITECTURE.md](01-architecture/ARCHITECTURE.md)
+4. [01-architecture/AI_CORE_ARCHITECTURE.md](01-architecture/AI_CORE_ARCHITECTURE.md)
+5. ADRs 0005–0009 for why the AI Core is shaped this way

@@ -1,0 +1,33 @@
+{
+  "name": "@omnis/platform-tests",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cross-package tests: architecture boundary enforcement, AI Core integration flows and event contract conformance.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint architecture integration contract support --max-warnings=0",
+    "test": "vitest run",
+    "clean": "node ../scripts/clean-package.mjs"
+  },
+  "devDependencies": {
+    "@omnis/agent-runtime": "workspace:*",
+    "@omnis/ai-core-runtime": "workspace:*",
+    "@omnis/ai-core-types": "workspace:*",
+    "@omnis/budget-engine": "workspace:*",
+    "@omnis/contracts": "workspace:*",
+    "@omnis/errors": "workspace:*",
+    "@omnis/events": "workspace:*",
+    "@omnis/execution-context": "workspace:*",
+    "@omnis/policy-engine": "workspace:*",
+    "@omnis/telemetry": "workspace:*",
+    "@omnis/tool-runtime": "workspace:*",
+    "@omnis/types": "workspace:*",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

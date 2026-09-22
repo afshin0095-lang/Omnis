@@ -7,6 +7,38 @@ All notable changes to OMNIS are documented here. The format follows
 
 ## [Unreleased]
 
+### Sprint 1 — AI Core foundation
+
+#### Added
+
+- **Twelve AI Core packages:** `@omnis/ai-core-types`, `execution-context`, `model-registry`,
+  `provider-registry`, `policy-engine`, `budget-engine`, `ai-evaluation`, `tool-runtime`,
+  `execution-kernel`, `model-orchestrator`, `agent-runtime`, `ai-core-runtime`.
+- **Provider-independent execution:** `ProviderAdapter` interface; no vendor SDK anywhere.
+- **Governance:** policy precedence (deny > require_approval > constrain > allow), fail-closed
+  gate; integer micro-USD budgets with idempotent reservations.
+- **Agent state machine** with legal transition table; planning pins capability→model; agents never
+  call providers/tools directly.
+- **Model orchestrator** with bounded retry, fallback (re-validates policy+budget), streaming.
+- **Execution kernel** with dependency-ordered steps, hooks, cancellation, deadlines, recording.
+- **Deterministic evaluation** (rules only; no LLM-as-judge).
+- **`ai.*` events** (22 types) with definitions; telemetry `omnis.ai.*` attributes.
+- **New identifier kinds:** model, provider, tool, policy, budget, reservation, evaluation, plan.
+- **`tests/` workspace member:** architecture, integration (execution, policy-budget, fallback),
+  contract (ai-core-events).
+- **Workspace health:** AI Core layers, forbidden vendor deps, source import rules, AI event
+  registration pairing, project-reference resolution.
+- **Studio AI Core feature:** view models, transport client (`AiCoreResult`), deterministic mock
+  runtime; welcome page lists AI Core packages.
+- **Documentation:** `docs/03-contracts/AI_*.md`, `docs/01-architecture/AI_*.md`, ADRs 0005–0009;
+  PROJECT_STATUS, ROADMAP, GLOSSARY, SUMMARY updated.
+
+#### Invariants
+
+- Policy before privileged execution; budget before expensive work.
+- No unbounded retries; no silent failures; secrets never logged.
+- Money: integer micro-USD; `null` (unpriced) ≠ `0` (free).
+
 ### Sprint 0 — foundation, audit and production architecture bootstrap
 
 #### Added

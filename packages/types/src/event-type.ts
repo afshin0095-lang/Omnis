@@ -44,6 +44,15 @@ export const EVENT_NAMESPACES = [
   "content",
   "publishing",
   "analytics",
+  /**
+   * AI Core: agent, model, tool, policy, budget and evaluation lifecycle.
+   *
+   * A namespace of its own rather than folded into `agent.*`, because `agent.*` is
+   * owned by the Agent Runtime's *domain* contract (what an agent decided) while
+   * `ai.*` is the execution substrate (how the run was authorised, budgeted,
+   * scheduled and measured). Two different owners, two different change rates.
+   */
+  "ai",
 ] as const;
 
 /** One member of {@link EVENT_NAMESPACES}. */

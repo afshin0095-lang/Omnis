@@ -30,6 +30,7 @@ import {
   EVENT_OWNERS,
   EVENT_TYPES_WITHOUT_DEFINITIONS,
   EVENT_TYPE_NAMESPACES,
+  PLATFORM_EVENT_DEFINITIONS,
   SPRINT0_EVENT_DEFINITIONS,
   SYSTEM_EVENT_TYPES,
 } from "./index.js";
@@ -310,10 +311,11 @@ describe("validateEnvelope", () => {
   });
 });
 
-describe("the Sprint 0 vocabulary", () => {
-  it("declares seven namespaces", () => {
+describe("the platform vocabulary", () => {
+  it("declares eight namespaces", () => {
     expect(Object.keys(EVENT_TYPE_NAMESPACES).sort()).toEqual([
       "agent",
+      "ai",
       "analytics",
       "audience",
       "character",
@@ -353,7 +355,9 @@ describe("the Sprint 0 vocabulary", () => {
   it("registers a definition for every type that is not explicitly deferred", () => {
     // This is the check that separates "designed and deferred" from "forgotten": a type
     // in the vocabulary is either registered or listed, never neither.
-    const defined = new Set(SPRINT0_EVENT_DEFINITIONS.map((definition) => String(definition.type)));
+    const defined = new Set(
+      PLATFORM_EVENT_DEFINITIONS.map((definition) => String(definition.type)),
+    );
     const deferred = new Set(EVENT_TYPES_WITHOUT_DEFINITIONS.map(String));
 
     for (const type of ALL_EVENT_TYPES) {
@@ -366,15 +370,26 @@ describe("the Sprint 0 vocabulary", () => {
         false,
       );
     }
-    expect(defined.size).toBe(SPRINT0_EVENT_DEFINITIONS.length);
+    expect(defined.size).toBe(PLATFORM_EVENT_DEFINITIONS.length);
   });
 
-  it("defines sixteen events across the seven namespaces", () => {
+  it("defines sixteen Sprint 0 events across the seven original namespaces", () => {
     expect(SPRINT0_EVENT_DEFINITIONS).toHaveLength(16);
     const namespaces = new Set(
       SPRINT0_EVENT_DEFINITIONS.map((definition) => eventNamespaceOf(definition.type)),
     );
     expect(namespaces.size).toBe(7);
+  });
+
+  it("defines thirty-eight events across all eight namespaces", () => {
+    expect(PLATFORM_EVENT_DEFINITIONS).toHaveLength(38);
+    const namespaces = new Set(
+      PLATFORM_EVENT_DEFINITIONS.map((definition) => eventNamespaceOf(definition.type)),
+    );
+    expect(namespaces.size).toBe(8);
+    expect(PLATFORM_EVENT_DEFINITIONS.slice(0, SPRINT0_EVENT_DEFINITIONS.length)).toEqual(
+      SPRINT0_EVENT_DEFINITIONS,
+    );
   });
 
   it("pins every definition to the current contract version", () => {

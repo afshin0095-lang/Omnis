@@ -113,7 +113,7 @@ describe("event types", () => {
     expect(eventNamespaceOf(parseEventType("unknown.thing.done"))).toBeNull();
   });
 
-  it("declares the seven domain namespaces", () => {
+  it("declares the eight domain namespaces", () => {
     expect(EVENT_NAMESPACES).toEqual([
       "system",
       "agent",
@@ -122,6 +122,9 @@ describe("event types", () => {
       "content",
       "publishing",
       "analytics",
+      // Added in Sprint 1: the AI Core execution substrate. Appended rather than
+      // inserted, so the ordering of the seven Sprint 0 namespaces stays stable.
+      "ai",
     ]);
     expect(new Set(EVENT_NAMESPACES).size).toBe(EVENT_NAMESPACES.length);
   });

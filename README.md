@@ -14,19 +14,19 @@ continuous across months of output.
 
 ## Current status
 
-**Sprint 0 — foundation, audit and production architecture bootstrap — is complete.**
+**Sprint 0 (foundation) and Sprint 1 (AI Core foundation) are complete.**
 
-Sprint 0 deliberately builds no product features. It builds the typed foundation every later Sprint stands
-on: identifiers, errors, validation, contracts, events, configuration, logging, telemetry, design tokens,
-a component library and the Studio operator surface. Everything here is real, tested implementation —
-there are no placeholder packages, no stubbed core paths and no `TODO` throws.
+Sprint 0 built the typed platform foundation. Sprint 1 added a provider-independent AI execution
+architecture: twelve AI Core packages, the `ai.*` event namespace, architecture/integration/contract
+tests, and a Studio feature seam (client + deterministic mock runtime). No vendor SDK is installed.
+Sprint 2 (Character OS) has **not** started.
 
 | Gate             | Result                             |
 | ---------------- | ---------------------------------- |
-| `pnpm build`     | 11/11 packages                     |
-| `pnpm typecheck` | 11/11 packages                     |
-| `pnpm lint`      | 11/11 packages, `--max-warnings=0` |
-| `pnpm test`      | **815 tests**, 11/11 packages      |
+| `pnpm build`     | all workspace packages             |
+| `pnpm typecheck` | strict, all packages + tests       |
+| `pnpm lint`      | `--max-warnings=0`                 |
+| `pnpm test`      | package suites + `tests/` + studio |
 | `pnpm verify`    | workspace health + secret scan     |
 
 See [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md) for the authoritative snapshot and

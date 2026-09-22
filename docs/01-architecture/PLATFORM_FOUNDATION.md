@@ -1,6 +1,6 @@
 # Platform Foundation
 
-Status: Accepted · Sprint 0 · Owners: all `packages/*`
+Status: Accepted · Sprint 0–1 · Owners: all `packages/*`
 
 [ARCHITECTURE.md](ARCHITECTURE.md) describes **what** OMNIS is: its domains, layers and
 cross-cutting rules. This document describes **how the repository realises it** — the
@@ -224,3 +224,20 @@ installing, building and debugging are in [MONOREPO.md](../05-implementation/MON
    assignment is the architectural decision, and it should be made explicitly.
 6. Write tests before opening the pull request. A package with source and no tests fails
    the health gate.
+
+## Sprint 1 extension — AI Core layers
+
+Sprint 1 extends the layer table (see `scripts/check-workspace-health.mjs` for the
+authoritative list):
+
+| Layer | Additions                                                              |
+| ----- | ---------------------------------------------------------------------- |
+| 2     | `@omnis/ai-core-types`                                                 |
+| 4     | `@omnis/execution-context`                                             |
+| 5     | model/provider registries, policy-engine, budget-engine, ai-evaluation |
+| 7     | tool-runtime, execution-kernel, model-orchestrator                     |
+| 8     | agent-runtime                                                          |
+| 9     | ai-core-runtime                                                        |
+
+Vendor AI SDKs remain forbidden workspace-wide. Full design:
+[AI_CORE_ARCHITECTURE.md](AI_CORE_ARCHITECTURE.md).

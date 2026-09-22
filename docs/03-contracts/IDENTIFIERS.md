@@ -144,3 +144,20 @@ identifierKindOf("chr_01JQZ8M4K7N3P9R2S5T8V1W4X6"); // "character"
 Never choose a prefix that could be confused with an existing one when read aloud or
 glanced at (`chr` / `chn` is already the closest pair in the table and is the reason
 both are spelled out in full in documentation).
+
+## Sprint 1 kinds
+
+Additional kinds owned by the AI Core (same format rules as above):
+
+| Kind        | Prefix | Owner package     |
+| ----------- | ------ | ----------------- |
+| model       | `mdl`  | model-registry    |
+| provider    | `prv`  | provider-registry |
+| tool        | `tol`  | tool-runtime      |
+| policy      | `pol`  | policy-engine     |
+| budget      | `bud`  | budget-engine     |
+| reservation | `rsv`  | budget-engine     |
+| evaluation  | `evl`  | ai-evaluation     |
+| plan        | `pln`  | execution-kernel  |
+
+Implementation: `packages/types/src/identifiers.ts`.

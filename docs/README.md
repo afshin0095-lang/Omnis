@@ -79,3 +79,5 @@ The repository uses a numbered structure. Every document is listed in
 ## Canonical Product Loop
 
 `World → Research → Opportunity → Strategy → Character → Agents → Production → Publish → Audience → Feedback → Analytics → Experience → Learning → Improvement`
+
+Sprint 1 AI Core: see SUMMARY.md for the full map.

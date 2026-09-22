@@ -26,12 +26,18 @@ kept in step with the tree by a gate rather than by memory.
 
 ## 01 — Architecture
 
-| Document                                                                         | What it settles                                                          |
-| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| [01-architecture/ARCHITECTURE.md](01-architecture/ARCHITECTURE.md)               | Domains, layers, cross-cutting rules, the canonical experience loop      |
-| [01-architecture/PLATFORM_FOUNDATION.md](01-architecture/PLATFORM_FOUNDATION.md) | Packages, dependency layering, module system, strictness, gates          |
-| [01-architecture/EVENT_ARCHITECTURE.md](01-architecture/EVENT_ARCHITECTURE.md)   | Event grammar, ownership map, envelope, registry, delivery semantics     |
-| [01-architecture/SECURITY_BOUNDARIES.md](01-architecture/SECURITY_BOUNDARIES.md) | Redaction, personal data, tenancy, approval gates, telemetry cardinality |
+| Document                                                                               | What it settles                                                          |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| [01-architecture/ARCHITECTURE.md](01-architecture/ARCHITECTURE.md)                     | Domains, layers, cross-cutting rules, the canonical experience loop      |
+| [01-architecture/PLATFORM_FOUNDATION.md](01-architecture/PLATFORM_FOUNDATION.md)       | Packages, dependency layering, module system, strictness, gates          |
+| [01-architecture/EVENT_ARCHITECTURE.md](01-architecture/EVENT_ARCHITECTURE.md)         | Event grammar, ownership map, envelope, registry, delivery semantics     |
+| [01-architecture/SECURITY_BOUNDARIES.md](01-architecture/SECURITY_BOUNDARIES.md)       | Redaction, personal data, tenancy, approval gates, telemetry cardinality |
+| [01-architecture/AI_CORE_ARCHITECTURE.md](01-architecture/AI_CORE_ARCHITECTURE.md)     | Sprint 1 AI Core package map, layers, pipeline, invariants               |
+| [01-architecture/AI_CORE_CONTRACTS.md](01-architecture/AI_CORE_CONTRACTS.md)           | Index of AI Core contract documents                                      |
+| [01-architecture/AI_CORE_RUNTIME.md](01-architecture/AI_CORE_RUNTIME.md)               | Composition root façade, health, wiring rules                            |
+| [01-architecture/AI_AGENT_RUNTIME.md](01-architecture/AI_AGENT_RUNTIME.md)             | Agent lifecycle, planning, events                                        |
+| [01-architecture/AI_MODEL_ORCHESTRATION.md](01-architecture/AI_MODEL_ORCHESTRATION.md) | Model call pipeline, fallback, streaming                                 |
+| [01-architecture/AI_EXECUTION_KERNEL.md](01-architecture/AI_EXECUTION_KERNEL.md)       | Planned step execution, recording, failures                              |
 
 ## 02 — Domain Model
 
@@ -42,10 +48,19 @@ kept in step with the tree by a gate rather than by memory.
 
 ## 03 — Contracts
 
-| Document                                                   | What it settles                                                  |
-| ---------------------------------------------------------- | ---------------------------------------------------------------- |
-| [03-contracts/IDENTIFIERS.md](03-contracts/IDENTIFIERS.md) | Identifier format, the twenty kinds, invariants, adding a kind   |
-| [03-contracts/VERSIONING.md](03-contracts/VERSIONING.md)   | Compatibility rules, vocabulary governance, deprecation timeline |
+| Document                                                       | What it settles                                                  |
+| -------------------------------------------------------------- | ---------------------------------------------------------------- |
+| [03-contracts/IDENTIFIERS.md](03-contracts/IDENTIFIERS.md)     | Identifier format, the twenty kinds, invariants, adding a kind   |
+| [03-contracts/VERSIONING.md](03-contracts/VERSIONING.md)       | Compatibility rules, vocabulary governance, deprecation timeline |
+| [03-contracts/AI_CORE_TYPES.md](03-contracts/AI_CORE_TYPES.md) | AI vocabulary: models, agents, tools, executions, failures       |
+| [03-contracts/AI_EXECUTION.md](03-contracts/AI_EXECUTION.md)   | Execution scopes, kernel, statuses, results                      |
+| [03-contracts/AI_MODELS.md](03-contracts/AI_MODELS.md)         | Model references, descriptors, registry                          |
+| [03-contracts/AI_PROVIDERS.md](03-contracts/AI_PROVIDERS.md)   | Provider adapters, lifecycle, selection                          |
+| [03-contracts/AI_AGENTS.md](03-contracts/AI_AGENTS.md)         | Agent descriptors, state machine, planning                       |
+| [03-contracts/AI_TOOLS.md](03-contracts/AI_TOOLS.md)           | Tool descriptors, gated invocation                               |
+| [03-contracts/AI_POLICIES.md](03-contracts/AI_POLICIES.md)     | Policy decisions, precedence, fail-closed gate                   |
+| [03-contracts/AI_BUDGETS.md](03-contracts/AI_BUDGETS.md)       | Micro-USD budgets, reservations, windows                         |
+| [03-contracts/AI_EVALUATION.md](03-contracts/AI_EVALUATION.md) | Deterministic rule-based evaluation                              |
 
 ## 04 — Specifications
 
@@ -110,6 +125,11 @@ contract version or the toolchain requires one.
 - [07-decisions/ADR-0002-domain-boundaries.md](07-decisions/ADR-0002-domain-boundaries.md)
 - [07-decisions/ADR-0003-event-contracts.md](07-decisions/ADR-0003-event-contracts.md)
 - [07-decisions/ADR-0004-frontend-stack.md](07-decisions/ADR-0004-frontend-stack.md)
+- [07-decisions/ADR-0005-ai-core-boundaries.md](07-decisions/ADR-0005-ai-core-boundaries.md)
+- [07-decisions/ADR-0006-provider-independent-model-orchestration.md](07-decisions/ADR-0006-provider-independent-model-orchestration.md)
+- [07-decisions/ADR-0007-policy-and-budget-before-execution.md](07-decisions/ADR-0007-policy-and-budget-before-execution.md)
+- [07-decisions/ADR-0008-explicit-agent-state-machine.md](07-decisions/ADR-0008-explicit-agent-state-machine.md)
+- [07-decisions/ADR-0009-ai-core-runtime-composition.md](07-decisions/ADR-0009-ai-core-runtime-composition.md)
 
 ## Documentation rule
 

@@ -25,6 +25,8 @@
  *  4. Dependency layering — dependencies point strictly downward and there are no
  *     cycles. Technology ownership (Zod, React) is confined to the packages that
  *     are allowed to know about it.
+ *  4c. Event registrations — every declared `ai.*` event type has a definition, and no
+ *     definition points at a type nobody declared.
  *  5. Substance — no empty files, no placeholder markers, no `any`, no suppression
  *     comments, and every package with source has tests.
  *  6. Documentation integrity — every `docs/**` reference resolves, and every
@@ -56,15 +58,174 @@ const rel = (absolute) => path.relative(REPO_ROOT, absolute).split(path.sep).joi
 const LAYERS = [
   { layer: 0, name: "primitives", members: ["@omnis/types", "@omnis/theme"] },
   { layer: 1, name: "errors", members: ["@omnis/errors"] },
-  { layer: 2, name: "validation", members: ["@omnis/validation"] },
-  { layer: 3, name: "contracts", members: ["@omnis/contracts"] },
+  {
+    layer: 2,
+    name: "shared vocabulary",
+    members: ["@omnis/validation", "@omnis/ai-core-types"],
+  },
+  { layer: 3, name: "contracts", members: ["@omnis/contracts", "@omnis/config"] },
   {
     layer: 4,
     name: "platform",
-    members: ["@omnis/config", "@omnis/events", "@omnis/logging", "@omnis/telemetry"],
+    members: ["@omnis/logging", "@omnis/telemetry", "@omnis/events", "@omnis/execution-context"],
   },
-  { layer: 5, name: "presentation", members: ["@omnis/ui"] },
-  { layer: 6, name: "apps", members: ["studio"] },
+  {
+    layer: 5,
+    name: "registries and governance",
+    members: [
+      "@omnis/model-registry",
+      "@omnis/provider-registry",
+      "@omnis/policy-engine",
+      "@omnis/budget-engine",
+      "@omnis/ai-evaluation",
+    ],
+  },
+  { layer: 6, name: "presentation", members: ["@omnis/ui"] },
+  {
+    layer: 7,
+    name: "execution",
+    members: ["@omnis/tool-runtime", "@omnis/execution-kernel", "@omnis/model-orchestrator"],
+  },
+  { layer: 8, name: "agents", members: ["@omnis/agent-runtime"] },
+  { layer: 9, name: "composition", members: ["@omnis/ai-core-runtime"] },
+  { layer: 10, name: "apps", members: ["studio"] },
+];
+
+/**
+ * The highest layer, which is the application layer.
+ *
+ * Computed rather than written as a constant, so adding a layer cannot silently
+ * turn the "nothing may depend on an app" rule into a rule about some other layer.
+ */
+const MAX_LAYER = LAYERS.reduce((highest, entry) => Math.max(highest, entry.layer), 0);
+
+/**
+ * The AI Core: every package whose job is to decide, govern and record AI work.
+ *
+ * Named as a set because three rules apply to all of them and to none of the rest:
+ * they are headless, they are provider-independent, and they may not reach sideways
+ * into a runtime that is supposed to call them.
+ */
+const AI_CORE_PACKAGES = [
+  "@omnis/ai-core-types",
+  "@omnis/execution-context",
+  "@omnis/model-registry",
+  "@omnis/provider-registry",
+  "@omnis/policy-engine",
+  "@omnis/budget-engine",
+  "@omnis/ai-evaluation",
+  "@omnis/tool-runtime",
+  "@omnis/execution-kernel",
+  "@omnis/model-orchestrator",
+  "@omnis/agent-runtime",
+  "@omnis/ai-core-runtime",
+];
+
+/**
+ * Dependencies no member may declare, and no source file may import.
+ *
+ * Sprint 1 is deliberately provider-independent: the AI Core decides *which* model
+ * to call and *whether* it may be called, and a vendor SDK is what actually calls
+ * one. Admitting a SDK here would put a vendor's types into the platform's
+ * vocabulary, its retry policy into the orchestrator's, and its outage into the
+ * platform's own failure classes. When a provider adapter package exists, it will
+ * own these dependencies and nothing else may import it except through the
+ * `ProviderAdapter` interface.
+ */
+const FORBIDDEN_DEPENDENCIES = {
+  openai: "a vendor SDK; the AI Core is provider-independent (ADR-0005)",
+  "@anthropic-ai/sdk": "a vendor SDK; the AI Core is provider-independent (ADR-0005)",
+  "@google/generative-ai": "a vendor SDK; the AI Core is provider-independent (ADR-0005)",
+  "@google/genai": "a vendor SDK; the AI Core is provider-independent (ADR-0005)",
+  "@aws-sdk/client-bedrock-runtime": "a vendor SDK; the AI Core is provider-independent (ADR-0005)",
+  "cohere-ai": "a vendor SDK; the AI Core is provider-independent (ADR-0005)",
+  mistralai: "a vendor SDK; the AI Core is provider-independent (ADR-0005)",
+  "@mistralai/mistralai": "a vendor SDK; the AI Core is provider-independent (ADR-0005)",
+  ai: "an agent framework; OMNIS composes its own (ADR-0005)",
+  "@ai-sdk/openai": "a vendor SDK; the AI Core is provider-independent (ADR-0005)",
+  langchain: "an agent framework; OMNIS composes its own (ADR-0005)",
+  "@langchain/core": "an agent framework; OMNIS composes its own (ADR-0005)",
+  "@langchain/openai": "an agent framework and a vendor SDK (ADR-0005)",
+  llamaindex: "an agent framework; OMNIS composes its own (ADR-0005)",
+};
+
+/**
+ * Packages the AI Core may not import, because it is headless.
+ *
+ * Every one of these packages exists to render something in a browser. The AI Core
+ * runs where the work runs, which is usually nowhere near a document object, and a
+ * rendering dependency would make it untestable outside one.
+ */
+const PRESENTATION_PACKAGES = ["react", "react-dom", "framer-motion", "zustand", "lucide-react"];
+
+/**
+ * Internal imports that layering permits but the architecture forbids.
+ *
+ * Layering says "downward only"; it cannot say "these two siblings must not know
+ * each other". Each entry is an invariant the Sprint 1 design rests on, and each one
+ * has been broken by an innocent-looking import at least once in design review.
+ */
+const DENIED_INTERNAL_IMPORTS = [
+  {
+    from: "@omnis/events",
+    deny: ["@omnis/ai-core-types"],
+    reason:
+      "an event contract must be describable without one domain: the bus carries platform events, and coupling it to the AI Core would make every consumer of every event depend on it",
+  },
+  {
+    from: "@omnis/ai-core-types",
+    deny: ["@omnis/contracts", "@omnis/events", "@omnis/telemetry", "@omnis/validation"],
+    reason:
+      "the AI Core's vocabulary is the lowest thing in it: a type that needed a schema library or an event bus could not be reused by either",
+  },
+  {
+    from: "@omnis/execution-context",
+    deny: ["@omnis/telemetry"],
+    reason:
+      "a context reports the identifiers of the span it is inside; it does not create spans. Importing the tracer would make every context a telemetry client",
+  },
+  {
+    from: "@omnis/tool-runtime",
+    deny: ["@omnis/execution-kernel", "@omnis/model-orchestrator", "@omnis/agent-runtime"],
+    reason:
+      "a tool is gated by permission and policy, not by whatever scheduled it: the kernel calls tools, and a tool runtime that knew the kernel could call back into it",
+  },
+  {
+    from: "@omnis/model-orchestrator",
+    deny: ["@omnis/execution-kernel", "@omnis/tool-runtime", "@omnis/agent-runtime"],
+    reason:
+      "the orchestrator selects, gates and calls models. It does not schedule steps, invoke tools or run agents, and importing them would make a model call able to start one",
+  },
+  {
+    from: "@omnis/execution-kernel",
+    deny: ["@omnis/model-orchestrator", "@omnis/tool-runtime", "@omnis/agent-runtime"],
+    reason:
+      "the kernel runs the step executors it is handed. Naming a runtime would make the scheduler know about the things it schedules, and there would be no way to run a step the platform has not heard of",
+  },
+  {
+    from: "@omnis/agent-runtime",
+    deny: ["@omnis/model-orchestrator", "@omnis/tool-runtime"],
+    reason:
+      "an agent pipeline goes through the kernel, which is given the executors. An agent runtime that called a provider or a tool itself would bypass the policy and budget gates that are the point of the pipeline",
+  },
+  {
+    from: "@omnis/policy-engine",
+    deny: ["@omnis/budget-engine", "@omnis/tool-runtime", "@omnis/model-orchestrator"],
+    reason:
+      "a policy decides whether work may happen; it does not reserve money for it or perform it. A policy engine that could charge a budget would be able to spend on a denial",
+  },
+  {
+    from: "@omnis/budget-engine",
+    deny: ["@omnis/policy-engine", "@omnis/tool-runtime", "@omnis/model-orchestrator"],
+    reason:
+      "a budget accounts for work already decided on. It must not consult policy or invoke anything, or a reservation could become an execution",
+  },
+  {
+    from: "@omnis/ai-evaluation",
+    deny: ["@omnis/model-orchestrator", "@omnis/agent-runtime", "@omnis/tool-runtime"],
+    reason:
+      "evaluation is deterministic rules over recorded output. An evaluator that could call a model would be an LLM-as-judge, which Sprint 1 excludes on purpose",
+  },
 ];
 
 /** External packages only one member is allowed to depend on. */
@@ -138,7 +299,13 @@ function readJson(file) {
   }
 }
 
-/** Lists immediate subdirectories that contain a package.json. */
+/**
+ * Lists immediate subdirectories that contain a package.json.
+ *
+ * `tests` is a member too. It is the one place where cross-package invariants are
+ * tested, so it is checked like any other member — with the difference that it emits
+ * nothing, belongs to no layer, and nothing may depend on it.
+ */
 function workspaceMembers() {
   const members = [];
   for (const group of ["packages", "apps"]) {
@@ -155,6 +322,11 @@ function workspaceMembers() {
         members.push(directory);
       }
     }
+  }
+  // `tests` is a single member rather than a group of them.
+  const suite = path.join(REPO_ROOT, "tests");
+  if (existsSync(path.join(suite, "package.json"))) {
+    members.push(suite);
   }
   return members.sort();
 }
@@ -180,6 +352,18 @@ function stripComments(source) {
   return source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'`\\])\/\/.*$/gm, "$1");
 }
 
+/**
+ * Blanks the contents of string literals, keeping the quotes and the line count.
+ *
+ * Used for the marker scan, which is the mirror image of the code scan: a marker is
+ * deferred work, and deferred work is written in comments, never in data. A test for
+ * a rule that forbids the substring "todo" has to contain that substring, and failing
+ * it would teach people to weaken the rule instead of writing the test.
+ */
+function blankStringLiterals(source) {
+  return source.replace(/(["'`])(?:\\.|(?!\1)[^\\])*\1/gs, (match) => match[0] + match[0]);
+}
+
 // --- 1/2. Manifests and version discipline --------------------------------
 
 const manifests = new Map();
@@ -194,6 +378,7 @@ for (const directory of workspaceMembers()) {
 
   const where = rel(manifestPath);
   const isApp = directory.includes(`${path.sep}apps${path.sep}`);
+  const isTestSuite = rel(directory) === "tests";
 
   if (typeof manifest.name !== "string" || manifest.name.length === 0) {
     fail(where, "has no package name");
@@ -213,13 +398,17 @@ for (const directory of workspaceMembers()) {
     fail(where, "must describe itself: the description is the package's one-line contract");
   }
 
-  for (const script of REQUIRED_SCRIPTS) {
+  // A test suite emits nothing, so it is not asked to build. Everything else is.
+  const requiredScripts = isTestSuite
+    ? REQUIRED_SCRIPTS.filter((script) => script !== "build")
+    : REQUIRED_SCRIPTS;
+  for (const script of requiredScripts) {
     if (typeof manifest.scripts?.[script] !== "string") {
       fail(where, `is missing the "${script}" script`);
     }
   }
 
-  if (!isApp) {
+  if (!isApp && !isTestSuite) {
     // A library is consumed through its built output, so the entry points must be
     // declared; an app is consumed by a bundler and needs none of this.
     if (manifest.main !== "./dist/index.js") {
@@ -251,6 +440,23 @@ for (const directory of workspaceMembers()) {
       }
     }
   }
+  // A vendor SDK or an agent framework is refused in every dependency field, not
+  // just `dependencies`: a devDependency is installed all the same, and one that
+  // appears only there is how a forbidden import arrives unnoticed.
+  for (const field of [
+    "dependencies",
+    "devDependencies",
+    "peerDependencies",
+    "optionalDependencies",
+  ]) {
+    for (const dependency of Object.keys(manifest[field] ?? {})) {
+      const reason = FORBIDDEN_DEPENDENCIES[dependency];
+      if (reason !== undefined) {
+        fail(where, `must not depend on "${dependency}": ${reason}`);
+      }
+    }
+  }
+
   // Peer ranges are a published contract, not an installation choice, so they are
   // allowed to state a real range.
   for (const [dependency, version] of Object.entries(manifest.peerDependencies ?? {})) {
@@ -270,7 +476,13 @@ for (const { directory } of manifests.values()) {
     fail(rel(tsconfigPath), "is missing: every member needs its own tsconfig");
     continue;
   }
-  const expectedExtends = isApp ? undefined : "../../tsconfig.base.json";
+  const isTestSuite = rel(directory) === "tests";
+  // `tests` sits one level below the root, packages two.
+  const expectedExtends = isApp
+    ? undefined
+    : isTestSuite
+      ? "../tsconfig.base.json"
+      : "../../tsconfig.base.json";
   if (!isApp && tsconfig.extends !== expectedExtends) {
     fail(
       rel(tsconfigPath),
@@ -281,7 +493,26 @@ for (const { directory } of manifests.values()) {
     fail(rel(tsconfigPath), 'must set "noEmit": true — typecheck must not write output');
   }
 
-  if (!isApp) {
+  // A solution-style tsconfig compiles nothing itself and delegates to project references.
+  // A reference to a project that does not exist makes `tsc -b` skip it silently, which is
+  // how a package stops being typechecked and nobody notices until it fails at runtime.
+  for (const reference of tsconfig.references ?? []) {
+    if (reference === null || typeof reference !== "object" || typeof reference.path !== "string") {
+      fail(rel(tsconfigPath), `has a project reference with no path: ${JSON.stringify(reference)}`);
+      continue;
+    }
+    // A reference may name a directory (whose tsconfig.json is then used) or a
+    // configuration file directly; both are legal and both have to resolve.
+    const referenced = path.resolve(directory, reference.path);
+    const resolved = reference.path.endsWith(".json")
+      ? referenced
+      : path.join(referenced, "tsconfig.json");
+    if (!existsSync(resolved)) {
+      fail(rel(tsconfigPath), `references "${reference.path}", which resolves to nothing`);
+    }
+  }
+
+  if (!isApp && !isTestSuite) {
     const buildPath = path.join(directory, "tsconfig.build.json");
     const build = readJson(buildPath);
     if (build === null) {
@@ -306,8 +537,14 @@ for (const { layer, members } of LAYERS) {
 
 const graph = new Map();
 
+const testSuites = new Set(
+  [...manifests]
+    .filter(([name, { directory }]) => rel(directory) === "tests")
+    .map(([name]) => name),
+);
+
 for (const [name, { directory, manifest }] of manifests) {
-  if (!layerOf.has(name)) {
+  if (!layerOf.has(name) && !testSuites.has(name)) {
     fail(
       rel(path.join(directory, "package.json")),
       `"${name}" is not assigned to a dependency layer in scripts/check-workspace-health.mjs`,
@@ -317,6 +554,12 @@ for (const [name, { directory, manifest }] of manifests) {
     manifests.has(dependency),
   );
   graph.set(name, internal);
+
+  // A test suite is the top of the graph in every sense: it may depend on anything,
+  // and nothing may depend on it, or production code would be built out of fixtures.
+  if (testSuites.has(name)) {
+    continue;
+  }
 
   for (const dependency of internal) {
     const from = layerOf.get(name);
@@ -365,12 +608,172 @@ for (const start of graph.keys()) {
   }
 }
 
-// No package may depend on an application.
+// No package may depend on an application, and none may depend on a test suite.
 for (const [name, dependencies] of graph) {
   for (const dependency of dependencies) {
-    if (layerOf.get(dependency) === LAYERS.length - 1) {
+    if (layerOf.get(dependency) === MAX_LAYER) {
       fail(name, `must not depend on the application "${dependency}"`);
     }
+    if (testSuites.has(dependency)) {
+      fail(name, `must not depend on the test suite "${dependency}"`);
+    }
+  }
+}
+
+// --- 4b. Source import rules ----------------------------------------------
+
+/**
+ * What the source is allowed to import, checked in the source.
+ *
+ * Manifest checks see what a package *declares*; these see what it *reaches for*.
+ * The difference matters in exactly the cases that hurt: a vendor SDK imported
+ * without being declared, a fixture imported by production code because it was
+ * convenient, and a sibling runtime imported because it was there. Each rule below
+ * names the invariant it protects, and each is a rule the design documents state in
+ * prose — prose that a compiler will not enforce.
+ */
+
+/** The bare package name behind an import specifier, or null for a relative one. */
+function packageOf(specifier) {
+  if (specifier.startsWith(".") || specifier.startsWith("/")) {
+    return null;
+  }
+  const parts = specifier.split("/");
+  return specifier.startsWith("@") ? parts.slice(0, 2).join("/") : parts[0];
+}
+
+/** Every module specifier a source file mentions, static or dynamic. */
+const IMPORT_PATTERN = /(?:\bfrom|\bimport|\brequire)\s*\(?\s*["']([^"']+)["']/g;
+
+/** Members by directory, longest first so a nested package wins over its parent. */
+const membersByDirectory = [...manifests.entries()]
+  .map(([name, { directory }]) => ({ name, directory: rel(directory) }))
+  .sort((left, right) => right.directory.length - left.directory.length);
+
+/** The member a file belongs to, or null when it belongs to none. */
+function ownerOf(relative) {
+  for (const member of membersByDirectory) {
+    if (relative === member.directory || relative.startsWith(`${member.directory}/`)) {
+      return member.name;
+    }
+  }
+  return null;
+}
+
+const isFixtureFile = (relative) =>
+  /\.test\.[cm]?[jt]sx?$/.test(relative) || /(^|\/)testSupport\.[cm]?[jt]sx?$/.test(relative);
+
+for (const file of walk(REPO_ROOT, SOURCE_EXTENSIONS)) {
+  const relative = rel(file);
+  if (relative.includes("/dist/") || relative.includes("/node_modules/")) {
+    continue;
+  }
+  const owner = ownerOf(relative);
+  const code = stripComments(read(file) ?? "");
+  const specifiers = [...code.matchAll(IMPORT_PATTERN)].map((match) => match[1]);
+  const inAiCore = owner !== null && AI_CORE_PACKAGES.includes(owner);
+  const fixture = isFixtureFile(relative);
+
+  for (const specifier of specifiers) {
+    const dependency = packageOf(specifier);
+
+    if (dependency !== null && FORBIDDEN_DEPENDENCIES[dependency] !== undefined) {
+      fail(relative, `imports "${specifier}": ${FORBIDDEN_DEPENDENCIES[dependency]}`);
+      continue;
+    }
+    if (inAiCore && dependency !== null && PRESENTATION_PACKAGES.includes(dependency)) {
+      fail(
+        relative,
+        `imports "${specifier}": the AI Core is headless, so it may not depend on a rendering package`,
+      );
+      continue;
+    }
+    for (const [technology, owners] of Object.entries(TECHNOLOGY_OWNERS)) {
+      if (dependency === technology && owner !== null && !owners.includes(owner)) {
+        fail(relative, `imports "${specifier}": "${technology}" is owned by ${owners.join(", ")}`);
+      }
+    }
+    for (const rule of DENIED_INTERNAL_IMPORTS) {
+      if (owner === rule.from && dependency !== null && rule.deny.includes(dependency)) {
+        fail(relative, `imports "${specifier}": ${rule.reason}`);
+      }
+    }
+  }
+
+  // Production code may not import a fixture. The dependency is invisible in a
+  // manifest and compiles happily, and it turns a test helper into an API.
+  if (!fixture && owner !== null && !testSuites.has(owner)) {
+    for (const specifier of specifiers) {
+      if (packageOf(specifier) === null && /testSupport(\.js)?$|\.test(\.js)?$/.test(specifier)) {
+        fail(relative, `imports "${specifier}": production code may not depend on a test fixture`);
+      }
+    }
+  }
+}
+
+// --- 4c. Required AI event registrations -----------------------------------
+
+/**
+ * Every declared `ai.*` event type must have a definition, and every definition must
+ * point at a declared type.
+ *
+ * The events package cannot import the AI Core's types, so nothing at compile time ties a
+ * declaration to its definition: a new event type can be declared, subscribed to by a
+ * consumer, and never defined, and the bus would refuse every envelope of it at runtime.
+ * This is the gate that catches it before a consumer does.
+ */
+const aiEventTypesPath = path.join(REPO_ROOT, "packages", "events", "src", "ai-event-types.ts");
+const aiDefinitionsPath = path.join(REPO_ROOT, "packages", "events", "src", "ai-definitions.ts");
+if (!existsSync(aiEventTypesPath) || !existsSync(aiDefinitionsPath)) {
+  fail(
+    rel(aiEventTypesPath),
+    "or its definitions file is missing: the ai.* namespace is part of the event contract",
+  );
+} else {
+  const declaredSource = readFileSync(aiEventTypesPath, "utf8");
+  const definedSource = readFileSync(aiDefinitionsPath, "utf8");
+  const declared = new Map();
+  for (const match of declaredSource.matchAll(
+    /^\s+(\w+): parseEventType\("(ai\.[a-z0-9.]+)"\),$/gm,
+  )) {
+    const [, key, literal] = match;
+    if (declared.has(key)) {
+      fail(rel(aiEventTypesPath), `declares the event key "${key}" twice`);
+    }
+    declared.set(key, literal);
+  }
+  const literals = new Map();
+  for (const [key, literal] of declared) {
+    if (literals.has(literal)) {
+      fail(
+        rel(aiEventTypesPath),
+        `declares "${literal}" twice (as "${literals.get(literal)}" and "${key}"): one event, one type`,
+      );
+    }
+    literals.set(literal, key);
+  }
+  const defined = new Set();
+  for (const match of definedSource.matchAll(/type:\s*AI_EVENT_TYPES\.(\w+)/g)) {
+    defined.add(match[1]);
+  }
+  for (const key of declared.keys()) {
+    if (!defined.has(key)) {
+      fail(
+        rel(aiDefinitionsPath),
+        `defines no event for AI_EVENT_TYPES.${key}: a declared type with no definition cannot be published or validated`,
+      );
+    }
+  }
+  for (const key of defined) {
+    if (!declared.has(key)) {
+      fail(
+        rel(aiDefinitionsPath),
+        `defines AI_EVENT_TYPES.${key}, which is not declared: a definition nobody declared is unreachable`,
+      );
+    }
+  }
+  if (declared.size === 0) {
+    fail(rel(aiEventTypesPath), "declares no ai.* event types at all");
   }
 }
 
@@ -413,11 +816,13 @@ for (const file of walk(REPO_ROOT, new Set([...SOURCE_EXTENSIONS, ...DOC_EXTENSI
     packagesWithTests.add(owner);
   }
 
-  // Placeholder markers are meaningful in comments, so they are searched for in the
-  // raw text; the code patterns are searched for only after comments are stripped so
-  // that documentation prose cannot be mistaken for a type annotation.
-  if (MARKER_PATTERN.test(text)) {
-    const line = text.split("\n").findIndex((candidate) => MARKER_PATTERN.test(candidate));
+  // Placeholder markers are meaningful in comments, so they are searched for with
+  // string literals blanked; the code patterns are searched for only after comments
+  // are stripped, so that documentation prose cannot be mistaken for a type
+  // annotation. Each scan removes exactly the text the other one is about.
+  const markers = blankStringLiterals(text);
+  if (MARKER_PATTERN.test(markers)) {
+    const line = markers.split("\n").findIndex((candidate) => MARKER_PATTERN.test(candidate));
     fail(`${relative}:${line + 1}`, "contains a TODO/FIXME/XXX/HACK marker");
   }
 

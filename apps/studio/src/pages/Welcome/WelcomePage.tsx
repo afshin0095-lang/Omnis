@@ -26,7 +26,12 @@ import Logo from "../../components/branding/Logo";
 import Tagline from "../../components/branding/Tagline";
 import Orb from "../../components/effects/Orb";
 import RootLayout from "../../components/layout/RootLayout";
-import { FOUNDATION_DESCRIPTIONS, FOUNDATION_PACKAGES } from "../../foundation";
+import {
+  AI_CORE_DESCRIPTIONS,
+  AI_CORE_PACKAGES,
+  FOUNDATION_DESCRIPTIONS,
+  FOUNDATION_PACKAGES,
+} from "../../foundation";
 import { useStudioTheme } from "../../theme/StudioThemeProvider";
 
 /** Renders the active theme's own values, read from the theme object at runtime. */
@@ -155,6 +160,15 @@ export default function WelcomePage() {
             {FOUNDATION_PACKAGES.join(" · ")}
           </Text>
         </Stack>
+
+        <Stack gap={2} align="center">
+          <Text size="xs" tone="subtle" tracking="wide">
+            AI Core packages
+          </Text>
+          <Text as="p" size="xs" tone="subtle" mono className="welcome__services">
+            {AI_CORE_PACKAGES.join(" · ")}
+          </Text>
+        </Stack>
       </Stack>
 
       <Modal
@@ -181,6 +195,21 @@ export default function WelcomePage() {
               </Text>
               <Text size="xs" tone="muted">
                 {FOUNDATION_DESCRIPTIONS[name]}
+              </Text>
+            </Stack>
+          ))}
+        </Stack>
+
+        <Divider />
+
+        <Stack gap={2}>
+          {AI_CORE_PACKAGES.map((name) => (
+            <Stack key={name} direction="row" gap={3} align="baseline">
+              <Text size="xs" mono tone="primary" style={{ minWidth: "11rem" }}>
+                {name}
+              </Text>
+              <Text size="xs" tone="muted">
+                {AI_CORE_DESCRIPTIONS[name]}
               </Text>
             </Stack>
           ))}

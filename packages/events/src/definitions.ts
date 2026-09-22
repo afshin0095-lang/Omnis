@@ -29,7 +29,6 @@
  *   experience (behaviour changes, performance) are what other domains need.
  */
 
-import { parseTrimmedString } from "@omnis/types";
 import type { EventDefinition } from "./definition.js";
 import { defineEvent } from "./definition.js";
 import { CONTRACT_VERSION } from "@omnis/contracts";
@@ -51,6 +50,8 @@ import {
   publishingJobCreatedPayloadSchema,
   systemInitializedPayloadSchema,
 } from "./payloads.js";
+import { AI_CORE_EVENT_DEFINITIONS } from "./ai-definitions.js";
+import { EVENT_OWNERS } from "./owners.js";
 import {
   AGENT_EVENT_TYPES,
   ANALYTICS_EVENT_TYPES,
@@ -60,24 +61,6 @@ import {
   PUBLISHING_EVENT_TYPES,
   SYSTEM_EVENT_TYPES,
 } from "./event-types.js";
-
-/**
- * Logical service names owning each event namespace.
- *
- * These are the names that will appear in `source` and `owner` once the services
- * exist. Declaring them now means the ownership map is fixed before code is
- * written against it, rather than being negotiated afterwards.
- */
-export const EVENT_OWNERS = {
-  platform: parseTrimmedString("omnis.platform"),
-  aiCore: parseTrimmedString("ai-core"),
-  characterOs: parseTrimmedString("character-os"),
-  audienceIntelligence: parseTrimmedString("audience-intelligence"),
-  contentStrategy: parseTrimmedString("content-strategy"),
-  contentFactory: parseTrimmedString("content-factory"),
-  publishing: parseTrimmedString("publishing"),
-  analytics: parseTrimmedString("analytics"),
-} as const;
 
 /**
  * Every event definition Sprint 0 registers.
@@ -221,3 +204,16 @@ export const SPRINT0_EVENT_DEFINITIONS: readonly EventDefinition[] = [
     payloadSchema: analyticsPerformanceRecordedPayloadSchema,
   }),
 ];
+
+/**
+ * Every definition the platform registers: Sprint 0's sixteen plus AI Core's twenty-two.
+ *
+ * Seeding a registry from this list is what makes "the vocabulary is declared"
+ * and "the vocabulary is publishable" the same statement. A consumer that seeds
+ * from {@link SPRINT0_EVENT_DEFINITIONS} alone would reject every `ai.*` event
+ * as unregistered, which reads as a producer bug and is a wiring bug.
+ */
+export const PLATFORM_EVENT_DEFINITIONS: readonly EventDefinition[] = Object.freeze([
+  ...SPRINT0_EVENT_DEFINITIONS,
+  ...AI_CORE_EVENT_DEFINITIONS,
+]);

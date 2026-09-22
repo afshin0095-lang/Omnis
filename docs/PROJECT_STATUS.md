@@ -4,89 +4,100 @@ Authoritative snapshot of what exists **right now**. Updated at the end of every
 This document is deliberately blunt about what is _not_ built: a status page that implies
 capability the repository does not have is worse than no status page.
 
-Last updated: Sprint 0 complete · 2026-09-11
+Last updated: Sprint 1 complete · 2026-09-22
 
 ## 1. Summary
 
-| Area                                                                             | State                                                                  |
-| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Repository foundation (monorepo, toolchain, gates)                               | **Complete**                                                           |
-| Platform packages (11)                                                           | **Complete**, 815 tests green                                          |
-| Documentation set (architecture, contracts, ADRs, specs)                         | **Complete** for Sprint 0 scope                                        |
-| Studio operator surface                                                          | **Foundation complete** — branding, layout, welcome page; no features  |
-| CI                                                                               | GitHub Actions workflow running the full gate on push and pull request |
-| Domain implementations (Character OS, Content Factory, Publishing, Analytics, …) | **Not started** — specifications only                                  |
-| AI Core (agents, models, providers, tools, policy, budget)                       | **Not started** — Sprint 1                                             |
-| Durable event transport, database, queues                                        | **Not started** — the in-memory bus is a reference implementation      |
-| Provider integrations (OpenAI, Anthropic, Google, platforms)                     | **None** — deliberate; no vendor SDK is installed anywhere             |
-| Deployment                                                                       | **Not started**                                                        |
+| Area                                                                             | State                                                                     |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Repository foundation (monorepo, toolchain, gates)                               | **Complete**                                                              |
+| Platform packages (Sprint 0)                                                     | **Complete**                                                              |
+| AI Core packages (Sprint 1, 12 packages)                                         | **Complete** — provider-independent execution architecture                |
+| `ai.*` event namespace                                                           | **Complete** — 22 event types, all defined                                |
+| Architecture / integration / contract test suites (`tests/`)                     | **Complete**                                                              |
+| Studio operator surface                                                          | **Foundation + AI Core feature seam** (client, mock runtime, view models) |
+| Documentation (architecture, contracts, ADRs 0000–0009)                          | **Complete** for Sprint 0 + Sprint 1 scope                                |
+| CI                                                                               | GitHub Actions workflow running the full gate on push and pull request    |
+| Domain implementations (Character OS, Content Factory, Publishing, Analytics, …) | **Not started** — specifications only                                     |
+| Durable event transport, database, queues                                        | **Not started** — the in-memory bus is a reference implementation         |
+| Provider integrations (OpenAI, Anthropic, Google, platforms)                     | **None** — deliberate; no vendor SDK is installed anywhere                |
+| Deployment                                                                       | **Not started**                                                           |
+| Sprint 2 (Digital Human / Character OS)                                          | **Not started**                                                           |
 
 ## 2. Quality gates
 
-| Gate             | Command                          | Result                                     |
-| ---------------- | -------------------------------- | ------------------------------------------ |
-| Install          | `pnpm install --frozen-lockfile` | pass                                       |
-| Build            | `pnpm build`                     | 11/11 packages                             |
-| Typecheck        | `pnpm typecheck`                 | 17/17 tasks, strict, includes tests        |
-| Lint             | `pnpm lint`                      | 11/11 packages, `--max-warnings=0`         |
-| Test             | `pnpm test`                      | **815 tests**, 11/11 packages              |
-| Workspace health | `pnpm verify:workspace`          | pass — 0 findings                          |
-| Secret scan      | `pnpm verify:secrets`            | pass — 267 files, 16 audited test fixtures |
-| Combined         | `pnpm check`                     | pass                                       |
+| Gate             | Command                          | Result                             |
+| ---------------- | -------------------------------- | ---------------------------------- |
+| Install          | `pnpm install --frozen-lockfile` | pass                               |
+| Build            | `pnpm build`                     | pass                               |
+| Typecheck        | `pnpm typecheck`                 | pass                               |
+| Lint             | `pnpm lint`                      | pass, `--max-warnings=0`           |
+| Test             | `pnpm test`                      | pass (package + `tests/` + studio) |
+| Workspace health | `pnpm verify:workspace`          | pass                               |
+| Secret scan      | `pnpm verify:secrets`            | pass                               |
+| Combined         | `pnpm check`                     | pass                               |
+
+Exact counts are recorded in the Sprint 1 completion report and CHANGELOG; re-run the
+gates rather than trusting a stale number in prose.
 
 ## 3. Packages
 
-| Package             | Source LOC | Tests   | Role                                                        |
-| ------------------- | ---------- | ------- | ----------------------------------------------------------- |
-| `@omnis/types`      | 1 895      | 92      | Branded identifiers, value types, vocabularies, JSON guards |
-| `@omnis/errors`     | 1 341      | 79      | 13-class error hierarchy, stable codes, redaction           |
-| `@omnis/validation` | 676        | 49      | The single validation door (Zod 4)                          |
-| `@omnis/contracts`  | 1 120      | 72      | Envelope, commands, results, actor/tenant/execution context |
-| `@omnis/events`     | 1 416      | 83      | Registry, 16 definitions, payload schemas, reference bus    |
-| `@omnis/config`     | 517        | 55      | Schema-validated configuration, fail-fast in production     |
-| `@omnis/logging`    | 571        | 45      | Structured, correlation-aware, redacting logging            |
-| `@omnis/telemetry`  | 648        | 58      | Meters, instruments, tracers, spans, attribute derivation   |
-| `@omnis/theme`      | 1 647      | 62      | Tokens and themes as pure data                              |
-| `@omnis/ui`         | 3 403      | 166     | 15 accessible React components + `ThemeProvider`            |
-| `studio`            | 899        | 54      | Operator surface: Aurora, Orb, branding, layout             |
-| **Total**           | **14 133** | **815** | ~10 000 further lines of test code                          |
+### Sprint 0 — platform foundation
 
-## 4. What Sprint 0 established
+| Package             | Role                                                  |
+| ------------------- | ----------------------------------------------------- |
+| `@omnis/types`      | Branded identifiers, value types, JSON guards         |
+| `@omnis/errors`     | Typed error hierarchy + redaction                     |
+| `@omnis/validation` | Zod door + issue redaction                            |
+| `@omnis/contracts`  | Event envelope, actor/tenant/execution contexts       |
+| `@omnis/events`     | Registry, bus, Sprint 0 + Sprint 1 `ai.*` definitions |
+| `@omnis/config`     | Typed configuration                                   |
+| `@omnis/logging`    | Structured logging                                    |
+| `@omnis/telemetry`  | Spans + `omnis.ai.*` attributes                       |
+| `@omnis/theme`      | Design tokens                                         |
+| `@omnis/ui`         | Component library                                     |
+| `studio`            | Operator surface                                      |
 
-- **Identifiers**: 20 branded kinds over one ULID codec — see
-  [03-contracts/IDENTIFIERS.md](03-contracts/IDENTIFIERS.md).
-- **Errors**: typed, coded, retryable, redacted before serialization.
-- **Contracts**: versioned envelope with mandatory tenancy and correlation; actor as a
-  discriminated union; three-variant `CommandResult`.
-- **Events**: grammar, ownership map, registry and reference-bus semantics — see
-  [01-architecture/EVENT_ARCHITECTURE.md](01-architecture/EVENT_ARCHITECTURE.md).
-- **Configuration**: environment-aware strictness; production fails closed.
-- **Observability**: provider-independent interfaces plus validating no-ops, with a bounded
-  metric vocabulary.
-- **Design system**: framework-agnostic tokens and an accessible component library.
-- **Governance**: five ADRs, a health checker and a secret scanner that make the rules
-  mechanical.
+### Sprint 1 — AI Core
 
-## 5. Known gaps and deferred work
+| Package                     | Role                                      |
+| --------------------------- | ----------------------------------------- |
+| `@omnis/ai-core-types`      | AI vocabulary (pure data)                 |
+| `@omnis/execution-context`  | Scopes, cancellation, deadlines, metadata |
+| `@omnis/model-registry`     | Model catalogue                           |
+| `@omnis/provider-registry`  | Provider catalogue + `ProviderAdapter`    |
+| `@omnis/policy-engine`      | Authorisation, fail-closed gate           |
+| `@omnis/budget-engine`      | Micro-USD budgets, reservations           |
+| `@omnis/ai-evaluation`      | Deterministic rule evaluation             |
+| `@omnis/tool-runtime`       | Gated tool invocation                     |
+| `@omnis/execution-kernel`   | Planned step execution                    |
+| `@omnis/model-orchestrator` | Model pipeline, fallback, streaming       |
+| `@omnis/agent-runtime`      | Agent state machine + planning            |
+| `@omnis/ai-core-runtime`    | Composition root                          |
 
-Tracked with reasons in
-[05-implementation/DEVELOPMENT_WORKFLOW.md](05-implementation/DEVELOPMENT_WORKFLOW.md):
+## 4. Studio AI Core seam
 
-- Type-aware ESLint rules (`no-floating-promises` and friends) — Sprint 1.
-- Coverage thresholds — after the domain packages exist.
-- Durable event transport, outbox, dead-lettering — when a service needs them.
-- Concrete telemetry backend — when deployment lands.
-- CI matrix across Node versions — with a deployment target.
-- happy-dom gaps (no `backdrop-filter`, `color-mix()` in shorthand) mean some visual
-  behaviour cannot be asserted in unit tests; a browser-based visual check is not yet in CI.
+`apps/studio/src/features/ai-core/`:
 
-## 6. Repository shape
+- view models + formatters (`types.ts`)
+- transport client that never throws (`client.ts`)
+- deterministic mock backend (`mockRuntime.ts`)
+- barrel (`index.ts`)
 
-```text
-11 workspace members · 5 ADRs · 4 architecture documents · 2 contract documents
-39 domain/subsystem specifications · 3 implementation guides · 1 CI workflow
-3 workspace scripts (health, secrets, clean)
-```
+Foundation welcome page lists both foundation and AI Core packages.
 
-Nothing under `dist/`, `node_modules/` or `.turbo/` is tracked; the health checker fails if
-that ever changes.
+## 5. What is deliberately not built
+
+- No OpenAI / Anthropic / Google SDK
+- No Character OS / Digital Human implementation (Sprint 2)
+- No durable queue, database or multi-tenant control plane
+- No production HTTP API in front of `ai-core-runtime` (Studio uses a mock transport)
+- No LLM-as-judge evaluation
+- No multi-agent mesh collaboration runtime
+
+## 6. Enforcement
+
+- Layer table and `FORBIDDEN_DEPENDENCIES` in `scripts/check-workspace-health.mjs`
+- Source import scan, empty-file / placeholder scan, AI event registration pairing
+- `tests/architecture`, `tests/integration`, `tests/contract`
+- Secret scan with audited fixtures only

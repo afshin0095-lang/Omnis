@@ -1,0 +1,104 @@
+# OMNIS continuous integration.
+#
+# One job, one command: `pnpm check` runs the same gate a contributor runs locally
+# (workspace health, secret scan, lint, typecheck, test, build) in dependency order.
+# Splitting the gate into several jobs would make a failure harder to reproduce, because
+# the tasks are cached and ordered by Turborepo against the built output of their
+# dependencies.
+#
+# Deliberate choices:
+#   - `--frozen-lockfile`: CI must never resolve a version a contributor did not.
+#   - corepack + `packageManager`: the pnpm version comes from the manifest, not from the
+#     workflow, so it cannot drift from local development.
+#   - Node from .nvmrc: one supported runtime line until a deployment target requires more.
+#   - `secrets` and `health` are reported as separate steps so a red build says which kind
+#     of rule was broken without reading a log.
+
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: true
+  # Turborepo reads these; pinning them keeps cache keys stable across runners.
+  NODE_ENV: test
+  OMNIS_ENV: test
+
+jobs:
+  gate:
+    name: Quality gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read Node version from .nvmrc
+        id: node-version
+        run: echo "version=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node-version.outputs.version }}
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Resolve pnpm from packageManager
+        run: corepack prepare --activate "$(node -p "require('./package.json').packageManager")"
+
+      - name: pnpm version
+        run: pnpm --version
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store
+          key: pnpm-store-${{ runner.os }}-node${{ steps.node-version.outputs.version }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-store-${{ runner.os }}-node${{ steps.node-version.outputs.version }}-
+
+      - name: Cache Turborepo
+        uses: actions/cache@v4
+        with:
+          path: .turbo/cache
+          key: turbo-${{ runner.os }}-node${{ steps.node-version.outputs.version }}-${{ hashFiles('pnpm-lock.yaml', 'tsconfig.base.json', 'eslint.config.mjs') }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-node${{ steps.node-version.outputs.version }}-${{ hashFiles('pnpm-lock.yaml', 'tsconfig.base.json', 'eslint.config.mjs') }}-
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Workspace health
+        run: pnpm verify:workspace
+
+      - name: Secret scan
+        run: pnpm verify:secrets
+
+      - name: Format check
+        run: pnpm format:check
+
+      - name: Lint, typecheck, test, build
+        run: pnpm exec turbo run lint typecheck test build
+
+      - name: Report build artefacts are untracked
+        if: always()
+        run: |
+          if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+            echo "::error::The gate modified tracked files; the working tree must be clean after CI."
+            git status --short
+            exit 1
+          fi

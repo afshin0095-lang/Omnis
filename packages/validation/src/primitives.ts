@@ -115,6 +115,14 @@ export const identifierSchemas = {
   request: identifierSchema("request"),
   trace: identifierSchema("trace"),
   span: identifierSchema("span"),
+  model: identifierSchema("model"),
+  provider: identifierSchema("provider"),
+  tool: identifierSchema("tool"),
+  policy: identifierSchema("policy"),
+  budget: identifierSchema("budget"),
+  reservation: identifierSchema("reservation"),
+  evaluation: identifierSchema("evaluation"),
+  plan: identifierSchema("plan"),
 } satisfies { [KKind in IdentifierKind]: z.ZodType<IdentifierTypeMap[KKind]> };
 
 /**

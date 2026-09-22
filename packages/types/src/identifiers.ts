@@ -91,6 +91,22 @@ export const IDENTIFIER_KINDS = {
   trace: "trc",
   /** A single span within a trace. */
   span: "spn",
+  /** A registered model offering, addressed through the Model Registry. */
+  model: "mdl",
+  /** A registered provider endpoint, addressed through the Provider Registry. */
+  provider: "prv",
+  /** A registered tool an agent may invoke through the Tool Runtime. */
+  tool: "tol",
+  /** A policy set evaluated before any privileged execution. */
+  policy: "pol",
+  /** A budget envelope bounding tokens, requests, time, money or tool calls. */
+  budget: "bud",
+  /** A hold against a budget, committed or released when the work finishes. */
+  reservation: "rsv",
+  /** One evaluation run over an execution result. */
+  evaluation: "evl",
+  /** An execution plan produced for one execution. */
+  plan: "pln",
 } as const;
 
 /** Union of identifier kind names, e.g. `"character" | "tenant" | ...`. */
@@ -141,6 +157,22 @@ export type ContentRequestId = Branded<string, "ContentRequestId">;
 export type TraceId = Branded<string, "TraceId">;
 /** Distributed span identifier. */
 export type SpanId = Branded<string, "SpanId">;
+/** Registered model offering identifier owned by the Model Registry. */
+export type ModelId = Branded<string, "ModelId">;
+/** Registered provider endpoint identifier owned by the Provider Registry. */
+export type ProviderId = Branded<string, "ProviderId">;
+/** Registered tool identifier owned by the Tool Runtime. */
+export type ToolId = Branded<string, "ToolId">;
+/** Policy set identifier owned by the Policy Engine. */
+export type PolicyId = Branded<string, "PolicyId">;
+/** Budget envelope identifier owned by the Budget Engine. */
+export type BudgetId = Branded<string, "BudgetId">;
+/** Budget reservation identifier owned by the Budget Engine. */
+export type ReservationId = Branded<string, "ReservationId">;
+/** Evaluation run identifier owned by AI Evaluation. */
+export type EvaluationId = Branded<string, "EvaluationId">;
+/** Execution plan identifier owned by the Execution Kernel. */
+export type PlanId = Branded<string, "PlanId">;
 
 /** The single most specific identifier type; used for polymorphic references. */
 export type AnyIdentifier =
@@ -163,7 +195,15 @@ export type AnyIdentifier =
   | OpportunityId
   | ContentRequestId
   | TraceId
-  | SpanId;
+  | SpanId
+  | ModelId
+  | ProviderId
+  | ToolId
+  | PolicyId
+  | BudgetId
+  | ReservationId
+  | EvaluationId
+  | PlanId;
 
 /** Maps a kind name to its branded identifier type. */
 export interface IdentifierTypeMap {
@@ -187,6 +227,14 @@ export interface IdentifierTypeMap {
   request: ContentRequestId;
   trace: TraceId;
   span: SpanId;
+  model: ModelId;
+  provider: ProviderId;
+  tool: ToolId;
+  policy: PolicyId;
+  budget: BudgetId;
+  reservation: ReservationId;
+  evaluation: EvaluationId;
+  plan: PlanId;
 }
 
 /** Prefix → kind reverse index, built once at module load. */
@@ -357,3 +405,11 @@ export const createOpportunityId = (): OpportunityId => createIdentifier("opport
 export const createContentRequestId = (): ContentRequestId => createIdentifier("request");
 export const createTraceId = (): TraceId => createIdentifier("trace");
 export const createSpanId = (): SpanId => createIdentifier("span");
+export const createModelId = (): ModelId => createIdentifier("model");
+export const createProviderId = (): ProviderId => createIdentifier("provider");
+export const createToolId = (): ToolId => createIdentifier("tool");
+export const createPolicyId = (): PolicyId => createIdentifier("policy");
+export const createBudgetId = (): BudgetId => createIdentifier("budget");
+export const createReservationId = (): ReservationId => createIdentifier("reservation");
+export const createEvaluationId = (): EvaluationId => createIdentifier("evaluation");
+export const createPlanId = (): PlanId => createIdentifier("plan");

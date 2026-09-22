@@ -100,3 +100,21 @@ an interface.
 | **Theme**        | A complete, composable set of tokens (`dark`, `light`, `aiStudio`). Pure data; framework-agnostic.                                  |
 | **Token (LLM)**  | A model's unit of text, counted for cost. **Never** use "token" unqualified in AI Core prose: say "design token" or "model token".  |
 | **`--omnis-*`**  | The canonical CSS custom property namespace emitted from theme tokens. The only naming scheme for CSS variables in this repository. |
+
+## AI Core (Sprint 1)
+
+| Term                   | Meaning                                                                                                                                        |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **AI Core**            | The twelve packages that decide, govern and record AI work, plus the `ai.*` events and Studio projection seam. Provider-independent by design. |
+| **Agent**              | A registered autonomous worker (`agt_…`) with a descriptor, ceilings and a table-driven lifecycle. Never calls providers or tools directly.    |
+| **Budget**             | A ceiling on tokens, requests, time, money (micro-USD) or tool calls. Holds are reserved before work and committed or released after.          |
+| **Execution kernel**   | Runs a dependency-ordered plan of steps; records attempts; enforces cancellation and deadlines.                                                |
+| **Execution scope**    | AI-layer context: cancellation, deadline, child scopes, redaction-aware metadata. Distinct from the contracts `ExecutionContext`.              |
+| **Micro-USD**          | Integer millionths of a US dollar. The only money unit in the AI Core. `null` means not priced; `0` means free.                                |
+| **Model orchestrator** | Sole path to a provider adapter: selection, policy/budget, retry, fallback, streaming, normalisation.                                          |
+| **Model reference**    | Discriminated address of a model: by id, slug or capability.                                                                                   |
+| **Policy decision**    | `allow` \| `deny` \| `constrain` \| `require_approval`, with precedence deny > require_approval > constrain > allow.                           |
+| **Provider adapter**   | Interface every model I/O goes through. No vendor SDK types above it.                                                                          |
+| **Reservation**        | An idempotent hold against a budget (`rsv_…`), settled when work finishes.                                                                     |
+| **Tool runtime**       | Permission + policy + budget gated tool invocation with timeout and result normalisation.                                                      |
+| **View model**         | Studio projection of AI Core data (strings/numbers/booleans). Not a domain type; no `@omnis/ai-core-types` import in the feature.              |

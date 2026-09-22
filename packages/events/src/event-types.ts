@@ -37,6 +37,7 @@
  */
 
 import { parseEventType, type EventType } from "@omnis/types";
+import { AI_EVENT_TYPES, AI_EVENT_TYPES_WITHOUT_DEFINITIONS } from "./ai-event-types.js";
 
 /** Platform lifecycle and health. */
 export const SYSTEM_EVENT_TYPES = {
@@ -138,9 +139,11 @@ export const ANALYTICS_EVENT_TYPES = {
  *
  * This is the authoritative vocabulary. Adding a namespace is a domain-boundary
  * change and requires an ADR; adding a type within an existing namespace is
- * additive.
+ * additive. The `ai` namespace was added by ADR-0009 when AI Core became a
+ * domain in its own right rather than a detail of `agent.*`.
  */
 export const EVENT_TYPE_NAMESPACES = {
+  ai: AI_EVENT_TYPES,
   system: SYSTEM_EVENT_TYPES,
   agent: AGENT_EVENT_TYPES,
   character: CHARACTER_EVENT_TYPES,
@@ -167,6 +170,7 @@ export const ALL_EVENT_TYPES: readonly EventType[] = Object.values(EVENT_TYPE_NA
  * See docs/01-architecture/EVENT_ARCHITECTURE.md for the ownership map.
  */
 export const EVENT_TYPES_WITHOUT_DEFINITIONS: readonly EventType[] = [
+  ...AI_EVENT_TYPES_WITHOUT_DEFINITIONS,
   SYSTEM_EVENT_TYPES.shutdownRequested,
   SYSTEM_EVENT_TYPES.healthDegraded,
   AGENT_EVENT_TYPES.toolInvoked,

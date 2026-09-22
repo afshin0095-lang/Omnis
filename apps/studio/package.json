@@ -17,6 +17,7 @@
   "dependencies": {
     "@omnis/errors": "workspace:*",
     "@omnis/theme": "workspace:*",
+    "@omnis/types": "workspace:*",
     "@omnis/ui": "workspace:*",
     "clsx": "catalog:",
     "framer-motion": "catalog:",

@@ -51,3 +51,18 @@ export {
   spanAttributesFromContext,
   SPAN_ATTRIBUTE_KEYS,
 } from "./attributes.js";
+
+export {
+  AI_METRIC_ATTRIBUTE_KEYS,
+  AI_SPAN_ATTRIBUTE_KEYS,
+  aiMetricAttributes,
+  aiSpanAttributes,
+  assertAiMetricAttributes,
+  isAiAttributeKey,
+} from "./ai-attributes.js";
+export type {
+  AiMetricAttributeKey,
+  AiMetricAttributeValues,
+  AiSpanAttributeKey,
+  AiSpanAttributeValues,
+} from "./ai-attributes.js";

@@ -138,8 +138,22 @@ describe("monotonic ULIDs", () => {
 });
 
 describe("the identifier namespace", () => {
-  it("declares twenty kinds", () => {
-    expect(KINDS).toHaveLength(20);
+  it("declares twenty-eight kinds", () => {
+    // Twenty platform kinds plus the eight AI Core kinds added in Sprint 1
+    // (model, provider, tool, policy, budget, reservation, evaluation, plan).
+    expect(KINDS).toHaveLength(28);
+    for (const kind of [
+      "model",
+      "provider",
+      "tool",
+      "policy",
+      "budget",
+      "reservation",
+      "evaluation",
+      "plan",
+    ]) {
+      expect(KINDS, kind).toContain(kind);
+    }
   });
 
   it("gives every kind a distinct three-character prefix", () => {
