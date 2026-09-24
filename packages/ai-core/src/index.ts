@@ -12,3 +12,5 @@ export * from "./evolution.js";
 export * from "./agent.js";
 export * from "./retry.js";
 export * from "./fallback.js";
+export * from "./approval.js";
+export * from "./durable.js";
