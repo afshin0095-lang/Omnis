@@ -9,7 +9,10 @@
     "outDir": "dist",
     "rootDir": "src",
     "skipLibCheck": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "types": ["node"]
   },
   "include": ["src"]
 }
