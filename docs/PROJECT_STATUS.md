@@ -13,8 +13,8 @@ A capability is implemented only when executable source code, tests, contracts, 
 
 ## Current Boundary
 
-- Active: Phase 0 — Production Foundation / Repository Reality Alignment
-- Next: Phase 1 — AI Core Foundation
+- Active: Phase 1 — AI Core Foundation (implementation underway)
+- Next: Phase 2 — Agent Runtime & Orchestration
 - Not yet implementation-proven: Digital Human, Audience Intelligence, Content Factory and autonomous loops
 
 ## Immediate Work
