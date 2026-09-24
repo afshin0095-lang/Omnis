@@ -11,7 +11,8 @@
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "types": ["node"]
   },
   "include": ["src"]
 }
