@@ -9,3 +9,6 @@ export * from "./orchestrator.js";
 export * from "./events.js";
 export * from "./kernel.js";
 export * from "./evolution.js";
+export * from "./agent.js";
+export * from "./retry.js";
+export * from "./fallback.js";
