@@ -1,7 +1,7 @@
 export type AiExecutionStatus =
   | "created" | "validated" | "authorized" | "reserved" | "planned"
   | "executing" | "settling" | "evaluating" | "completed"
-  | "failed" | "cancelled";
+  | "failed" | "cancelled" | "awaiting_approval";
 
 export interface AiExecutionRequest<TInput = unknown> {
   requestId: string;
@@ -24,10 +24,7 @@ export interface ModelRequirements {
   maxCost?: number;
 }
 
-export interface BudgetLimit {
-  currency: string;
-  maxAmount: number;
-}
+export interface BudgetLimit { currency: string; maxAmount: number; }
 
 export interface AiUsage {
   inputTokens: number;
@@ -39,13 +36,14 @@ export interface AiUsage {
 export interface AiExecutionResult<TOutput = unknown> {
   executionId: string;
   requestId: string;
-  status: "completed" | "failed" | "cancelled";
+  status: "completed" | "failed" | "cancelled" | "awaiting_approval";
   output?: TOutput;
   modelId?: string;
   providerId?: string;
   usage?: AiUsage;
   evaluation?: EvaluationResult;
   failure?: { code: string; message: string; retryable: boolean };
+  approvalRequestId?: string;
 }
 
 export interface EvaluationResult {
