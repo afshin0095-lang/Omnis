@@ -47,3 +47,7 @@ AI Core does not contain Character personality, content-specific prompting, plat
 - Telemetry for latency, routing, cost, failure and evaluation.
 - Secret-safe logs.
 - Reproducible execution metadata.
+
+## Evolution Contract
+
+Model selection is not permanently bound to a provider or model generation. The AI Core records capabilities, quality, cost and latency metadata and supports benchmark assessments that can update routing quality signals without changing the execution kernel. New model generations must enter through registry/adapter boundaries and pass benchmark, policy and regression gates before production routing.
