@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import type { AiExecutionRequest, AiExecutionResult } from "./types.js";
 import { ExecutionKernel } from "./kernel.js";
 
@@ -45,7 +46,7 @@ export class AgentRuntime {
     }
 
     return this.kernel.execute({
-      requestId: crypto.randomUUID(),
+      requestId: randomUUID(),
       tenantId: request.tenantId,
       agentId: agent.id,
       taskType: request.taskType,
