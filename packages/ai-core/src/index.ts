@@ -8,3 +8,4 @@ export * from "./evaluation.js";
 export * from "./orchestrator.js";
 export * from "./events.js";
 export * from "./kernel.js";
+export * from "./evolution.js";
