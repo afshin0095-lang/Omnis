@@ -90,6 +90,8 @@ importers:
 
   packages/theme: {}
 
+  packages/ai-core: {}
+
 packages:
 
   '@babel/code-frame@7.29.7':
