@@ -5,31 +5,26 @@
 
 ## Current State
 
-OMNIS has a substantial architecture/specification foundation and a Vite/React Studio shell. The repository is transitioning from specification-heavy development to executable vertical slices.
+OMNIS is moving from architecture/specification into executable vertical slices. Phase 1 is active until its runtime controls, recovery behavior, tests and CI are green.
 
 ## Implementation Truth Rule
 
-A capability is implemented only when executable source code, tests, contracts, observability and documentation are present and pass project quality gates.
+A capability is implemented only when executable source code, tests, contracts, observability, security/policy behavior, documentation and CI are present and pass project quality gates.
 
 ## Current Boundary
 
-- Active: Phase 1 — AI Core Foundation (implementation underway)
-- Next: Phase 2 — Agent Runtime & Orchestration
+- Active: Phase 1 — AI Core Foundation
+- Phase 1 focus: idempotency, durable state, human approval boundary, retry/fallback, budget/latency controls and executable contract tests.
+- Next: Phase 2 — Agent Runtime & Orchestration (only after Phase 1 is green)
 - Not yet implementation-proven: Digital Human, Audience Intelligence, Content Factory and autonomous loops
 
 ## Immediate Work
 
-1. Establish AI Core package boundaries and identifiers.
-2. Implement execution context.
-3. Implement model/provider registries.
-4. Implement policy and budget controls.
-5. Implement tool runtime and evaluation.
-6. Implement execution kernel.
-7. Implement model orchestration.
-8. Implement agent runtime.
-9. Integrate AI Core with Studio through a stable boundary.
-10. Add architecture, integration and contract tests.
-11. Synchronize roadmap/status with actual commits.
+1. Complete AI Core runtime controls.
+2. Add executable tests for idempotency, approval, fallback and cost/latency routing.
+3. Verify CI on the active branch.
+4. Freeze Phase 1 only after all quality gates are green.
+5. Start Phase 2 with agentic content orchestration and production-plan contracts.
 
 ## Product Quality Bar
 
